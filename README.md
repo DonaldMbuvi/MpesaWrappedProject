@@ -16,7 +16,6 @@ venv\Scripts\activate
 pip install fastapi sqlalchemy psycopg2-binary uvicorn python-multipart
 
 
-To start the application, run: uvicorn main:app --reload
 
 RESOURCES: (optional)
 FastAPI & Postgres: https://youtu.be/398DuQbQJq0?si=uUl4iBfbPCQyZIqd

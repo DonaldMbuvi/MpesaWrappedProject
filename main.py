@@ -1,76 +1,77 @@
-import inspect
+from io import StringIO
 import json
-from typing import Annotated
+import os
+import psycopg2
+from database import get_db_connection
 from fastapi import FastAPI, HTTPException, UploadFile, File, Depends, Query
 import csv
-from pydantic import BaseModel
-from  demo_models import Statement
-from demo_database import engine, sessionLocal
-from sqlalchemy.orm import Session
-from demo_database import Base
+from  models import CREATE_STATEMENT_TABLE
+from database import get_db
+from pdf_to_csv import convert_pdf_to_csv
 
 # Initialize FastAPI app
 app = FastAPI()
 
-# Create database table if they don't exist
-Statement.__table__.create(bind=engine, checkfirst=True)
+# Create database table upon start up if they don't exist
+@app.on_event("startup")
+def create_tables():
+    db = get_db_connection()
+    cur = db.cursor()
+    cur.execute(CREATE_STATEMENT_TABLE)
+    db.commit()
+    cur.close()
+    db.close()
 
-
-# Define Pydantic model for request validation
-class StatementBase(BaseModel):
-	date: str
-	name: str
-	amt_in: int
-	amt_out: int
-
-# Dependency to get a database session
-def get_db():
-	db = sessionLocal()
-	try:
-		yield db
-	finally:
-		db.close()
-
-# Annotated dependency for type hinting in FastAPI
-db_dependency = Annotated[Session, Depends(get_db)]
 
 # API endpoint to save a statement to the database
 @app.post("/upload-csv/")
-def upload_csv_and_save_to_db(db: db_dependency, username: str = Query(...), file: UploadFile = File(...)):
-	#check if file is csv
-	if not file.filename.endswith('.csv'):
-		raise HTTPException(status_code=400, detail="File is not a csv file")
-	#read csv data
-	contents =  file.file.read()
+def upload_csv_and_save_to_db(db: psycopg2.extensions.connection = Depends(get_db), username: str = Query(...), pdf_file: UploadFile = File(...)):
 
-	#parse the contents
-	csv_data = contents.decode('utf-8').splitlines()
-	csv_reader = csv.reader(csv_data)
-	next(csv_reader)  # Skip the header row
+    cleaned_csv_content  = convert_pdf_to_csv(pdf_file)
+    if not cleaned_csv_content :
+        raise HTTPException(status_code=400, detail="Failed to convert PDF to CSV")
 
-	#store csv data in mysql
-	for row in csv_reader:
-		item = Statement(username = username, date=row[0], name=row[1], amt_in=int(row[2]), amt_out=int(row[3]))
-		db.add(item)
-	db.commit()
-	db.close()
+    try:
+        # Split the CSV content into lines
+        csv_data = cleaned_csv_content.splitlines()
+        #read csv data
+        csv_reader = csv.reader(csv_data)
+        next(csv_reader)  # Skip the header row
+        cur = db.cursor()
+        #store csv data in mysql
+        for row in csv_reader:
+            sql = """
+            INSERT INTO statement_table (username, date, name, amt_in, amt_out)
+            VALUES (%s, %s, %s, %s, %s);
+            """	
+            try:
+                amt_in = int(float(row[2].replace(',', ''))) if row[2] else 0
+                amt_out = 0  # You might need to adjust this based on your data structure
+                cur.execute(sql, (username, row[0], row[1][:10], amt_in, amt_out))
+            except (ValueError, IndexError) as e:
+                print(f"Error processing row {row}: {e}")
+                continue
+        db.commit()
+        cur.close()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error processing CSVv: {str(e)}")
+    return "message: Transactions uploaded successfully"
+
 
 # API endpoint for getting the saved transactions
 @app.get('/get_transactions/')
-def get_transactions(db: db_dependency,  username: str = Query(...)):
-    user_statement = db.query(Statement).filter(Statement.username == username).all()
-	# Convert to dictionary format
-    user_statement_dict = [
-		{
-			"id": row.id,
-			"name": row.name,
-			"amt_out": row.amt_out,
-			"amt_in": row.amt_in,
-			"date": str(row.date) 
-		}
-		for row in user_statement
-	]
-	#save the statement in json file
+def get_transactions(db: psycopg2.extensions.connection = Depends(get_db),  username: str = Query(...)):
+    cur = db.cursor()
+    sql = """SELECT id, name, amt_out, amt_in, date FROM statement_table WHERE username = %s ORDER BY date DESC;"""
+    cur.execute(sql, (username,))
+    transactions = cur.fetchall()
+    cur.close()
+
+    
+    if not transactions:
+        raise HTTPException(status_code=404, detail="No transactions found for this user") 
+
+    #save the statement in json file
     with open("user_statement.json", "w") as file:
-        json.dump(user_statement_dict, file, indent=4)
+        json.dump(transactions, file, indent=4, default=str)
     return "transaction saved in json format"

@@ -37,34 +37,38 @@ try:
         else:
             return "Other"
 
-    def extract_recipient(description, category):
-        if category in ["M-Shwari Deposit", "M-Shwari Withdrawal"]:
-            return None  
 
-        
+
+    def extract_recipient(description, category): 
+        if category in ["M-Shwari Deposit", "M-Shwari Withdrawal"]:
+            return None  #don't have a recipient
+
+        description = str(description).strip()  # Ensure it's a string
+
         if "bundle purchase" in description.lower():
             return "SAFARICOM DATA BUNDLES"
+        
+        description = re.sub(r"Small Business to (\d{3,}|\*\*\*)?-?\s*", "", description, flags=re.IGNORECASE)
 
-        # If it's a KPLC transaction, extract only the first word 
+        description = re.sub(r"to (\d{3,}|\*\*\*)? -\s*", "", description, flags=re.IGNORECASE)
+
+        # **Handling KPLC Transactions**
         if "kplc" in description.lower():
             match = re.search(r"to (?:\d{3,}|\S+) - ([^,]+)", description)
             if match:
-                return re.sub(r"\d+", "", match.group(1).split()[0]).strip() 
-            
-        if "small business to *** - " in description:
-            match = re.search(r"small business to \*\*\* - (.+)", description, re.IGNORECASE)
-            if match:
-                name = match.group(1).strip()
-                return re.sub(r"[^a-zA-Z\s]", "", name).strip()   
+                return re.sub(r"\d+", "", match.group(1).split()[0]).strip()
 
-        # For other transactions, capture the full name and remove numbers
+        # **Extracting Names for Other Transactions**
         match = re.search(r"to (.+?)(?:\s*Acc\.|$)", description, re.IGNORECASE)
         if match:
             name = match.group(1).strip()
             name = re.sub(r"^[^a-zA-Z]+", "", name)  
-            return re.sub(r"\d+", "", name).strip()  
+            return re.sub(r"\d+", "", name).strip() 
 
-        return None
+        return description  
+
+
+
 
     def extract_transaction(row):
         date_time = row["completion time"].split(" ")

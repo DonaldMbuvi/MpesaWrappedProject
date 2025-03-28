@@ -98,8 +98,8 @@ Ensure you have the following installed:
 
 ## Contributors
 
-• Newton Kiprono        • Ian Kiprono Moses
-• Donald Mbuvi__________• Alex Maina   
+- Newton Kiprono________• Ian Kiprono Moses
+- Donald Mbuvi__________• Alex Maina   
   
 
 

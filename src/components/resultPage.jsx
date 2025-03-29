@@ -5,6 +5,11 @@ import {FaSun, FaMoon} from "react-icons/fa";
 
 const ResultPage=()=>{
     const { theme, toggleTheme } = useContext(ThemeContext);
+    const financialSummary={
+      highest:20000,
+      highestday:"Friday",
+      recipient:"Nadeem",
+    };
     return(
 <div style={styles.wrapper}>
         <div style={styles.container}>
@@ -16,6 +21,13 @@ const ResultPage=()=>{
                     {theme === "light" ? <FaMoon size={18}/> :<FaSun size={18}/>}
                   </button>
             <h1>Results Page</h1>
+            <div style={styles.card}>
+              <h2>Summary</h2>
+              <p><strong>Highest Single Transaction: </strong>ksh{financialSummary.highest}</p>
+              <p><strong>Day with most transactions: </strong>{financialSummary.highestday}</p>
+              <p><strong>Most frequent recipient: </strong>{financialSummary.recipient}</p>
+
+            </div>
             <Link to="/main">
             <button style={styles.button}
             onMouseEnter={(e) => {
@@ -102,6 +114,15 @@ const styles = {
         color: "#fff",
         cursor: "pointer",
       },
+      card: {
+        background: "#5c8700",
+        padding: "20px",
+        borderRadius: "10px",
+        boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+        textAlign: "center",
+        width: "300px",
+        margin: "20px auto",
+    },
     };
   
 

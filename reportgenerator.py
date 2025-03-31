@@ -1,20 +1,28 @@
 import json
 from collections import defaultdict
-from datetime import datetime, timedelta
+from datetime import datetime
 import heapq
+import os
 
 def load_transactions(file_path):
     """Load transactions from JSON file and add datetime objects"""
-    with open(file_path) as f:
-        transactions = json.load(f)
-    
-    for txn in transactions:
-        # Add datetime object for easier time-based operations
-        txn['datetime'] = datetime.strptime(
-            f"{txn['transaction_date']} {txn['transaction_time']}", 
-            "%Y-%m-%d %H:%M:%S"
-        )
-    return transactions
+    try:
+        with open(file_path) as f:
+            transactions = json.load(f)
+        
+        for txn in transactions:
+            # Add datetime object for easier time-based operations
+            txn['datetime'] = datetime.strptime(
+                f"{txn['transaction_date']} {txn['transaction_time']}", 
+                "%Y-%m-%d %H:%M:%S"
+            )
+        return transactions
+    except FileNotFoundError:
+        print(f"Error: File '{file_path}' not found. Please ensure it exists in the same directory as this script.")
+        return []
+    except json.JSONDecodeError:
+        print(f"Error: Invalid JSON format in '{file_path}'. Please validate your JSON data.")
+        return []
 
 def generate_time_frame_report(transactions, time_frame='monthly'):
     """Generate report grouped by time frame (daily, weekly, monthly)"""
@@ -39,17 +47,15 @@ def generate_time_frame_report(transactions, time_frame='monthly'):
 
 def generate_comprehensive_report(transactions):
     """Generate all required analytics without database queries"""
-    # Initialize metrics
     metrics = {
         'top_3_transactions': [],
         'top_5_days': [],
         'annual_lipa_na_mpesa': 0,
-        'category_frequency': defaultdict(int),
-        'monthly_counts': defaultdict(int),
+        'most_frequent_category': ("", 0),
+        'top_3_months': [],
         'airtime_bundles_total': 0
     }
     
-    # Temporary storage for calculations
     daily_counts = defaultdict(int)
     monthly_counts = defaultdict(int)
     category_counts = defaultdict(int)
@@ -67,12 +73,13 @@ def generate_comprehensive_report(transactions):
         # Track category frequency
         category_counts[txn['category']] += 1
         
-        # Track top transactions (using min-heap for efficiency)
+        # Track top transactions
         if txn['amount_out'] > 0:
+            # Store only the amount and index to avoid comparing dictionaries
             if len(top_transactions) < 3:
-                heapq.heappush(top_transactions, (txn['amount_out'], txn))
+                heapq.heappush(top_transactions, (txn['amount_out'], len(top_transactions)))
             else:
-                heapq.heappushpop(top_transactions, (txn['amount_out'], txn))
+                heapq.heappushpop(top_transactions, (txn['amount_out'], len(top_transactions)))
             
             # Sum Lipa na M-Pesa (Pay Bill)
             if txn['category'] == 'Pay Bill':
@@ -83,14 +90,18 @@ def generate_comprehensive_report(transactions):
                 metrics['airtime_bundles_total'] += txn['amount_out']
     
     # Prepare final metrics
-    metrics['top_3_transactions'] = [txn for (amt, txn) in sorted(top_transactions, reverse=True)]
+    # Sort the transactions by amount and get the top 3
+    top_transactions_sorted = sorted(top_transactions, reverse=True)[:3]
+    metrics['top_3_transactions'] = [transactions[i] for (amt, i) in top_transactions_sorted]
+    
     metrics['top_5_days'] = sorted(daily_counts.items(), key=lambda x: x[1], reverse=True)[:5]
-    metrics['most_frequent_category'] = max(category_counts.items(), key=lambda x: x[1])
+    if category_counts:
+        metrics['most_frequent_category'] = max(category_counts.items(), key=lambda x: x[1])
     metrics['top_3_months'] = sorted(monthly_counts.items(), key=lambda x: x[1], reverse=True)[:3]
     
     return metrics
 
-def format_report(report, output_format='json'):
+def format_report(report, output_format='json', time_frame=None):
     """Format the report for CLI or JSON output"""
     if output_format == 'cli':
         if 'top_3_transactions' in report:  # Comprehensive report
@@ -119,6 +130,8 @@ def format_report(report, output_format='json'):
             ])
             return "\n".join(output)
         else:  # Time frame report
+            if time_frame is None:
+                time_frame = "PERIOD"
             output = [f"\n{time_frame.upper()} REPORT", "=" * 40]
             for period, data in report.items():
                 output.append(
@@ -129,10 +142,16 @@ def format_report(report, output_format='json'):
     else:
         return json.dumps(report, indent=2, default=str)
 
-# Example Usage
 if __name__ == "__main__":
-    # Load and process data
-    transactions = load_transactions('transactions.json')
+    # Get the directory where the script is located
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    json_file = os.path.join(script_dir, 'transactions.json')
+    
+    transactions = load_transactions(json_file)
+    
+    if not transactions:
+        print("No transactions loaded. Exiting.")
+        exit(1)
     
     # Generate reports
     daily_report = generate_time_frame_report(transactions, 'daily')
@@ -141,7 +160,10 @@ if __name__ == "__main__":
     
     # Print sample outputs
     print("DAILY REPORT (CLI):")
-    print(format_report(daily_report, 'cli'))
+    print(format_report(daily_report, 'cli', 'daily'))
+    
+    print("\nMONTHLY REPORT (CLI):")
+    print(format_report(monthly_report, 'cli', 'monthly'))
     
     print("\nCOMPREHENSIVE REPORT (JSON):")
     print(format_report(comprehensive_report, 'json'))

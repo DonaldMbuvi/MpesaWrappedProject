@@ -7,15 +7,22 @@ import re
 from reading_csv import csv_cleaner
 
 def convert_pdf_to_csv(pdf_file):
-
     try:
-        # Read the uploaded file into memory
-        pdf_bytes = pdf_file.file.read()
-
-        # Open the PDF from bytes
-        doc = fitz.open("pdf", pdf_bytes)  # "pdf" forces PyMuPDF to read from bytes
-
-        data = []
+        try:
+            print("ptc.py - pdf file passed is: ",pdf_file)
+            with open(pdf_file, 'rb') as f:
+                pdf_bytes = f.read()
+            print("ptc.py - done reading pdf file")
+        except Exception as e:
+            print(f"ptc.py - Error reading PDF: {e}")
+            return
+        try:
+            # Open the PDF from bytes
+            doc = fitz.open("pdf", pdf_bytes)  # "pdf" forces PyMuPDF to read from bytes
+            data = []
+            print("ptc.py - PDF successfully opened from bytes")
+        except Exception as e:
+            print("ptc.py - Error opening PDF from bytes: {e}")
         customer_name= None 
         mobile_number= None
         
@@ -50,7 +57,11 @@ def convert_pdf_to_csv(pdf_file):
         
         # Convert to CSV (in-memory)
         csv_buffer = StringIO()
-        df.to_csv(csv_buffer, index=False)
+        try:
+            df.to_csv(csv_buffer, index=False)
+        except Exception as e:
+            print("ptc.py - Error encounterred while converting pdf to csv: ", e)
+            return
         csv_buffer.seek(0)  # Reset pointer
 
         # Clean CSV without writing to disk

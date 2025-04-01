@@ -1,13 +1,21 @@
 from io import StringIO
 import json
+from decrypt import decrypter
+import uvicorn
+import os
+import tempfile
 import psycopg2
+from pdf_to_csv import convert_pdf_to_csv
 from database import get_db_connection
-from fastapi import FastAPI, HTTPException, UploadFile, File, Depends, Query
+from fastapi import FastAPI, HTTPException, UploadFile, File, Depends, Form
+from fastapi.responses import JSONResponse
+import PyPDF2
 import csv
 from  models import CREATE_STATEMENT_TABLE
 from database import get_db
-from pypdf import PdfReader
-from pdf_to_csv import convert_pdf_to_csv
+import shutil
+import requests
+from typing import Optional
 
 # Initialize FastAPI app
 app = FastAPI()
@@ -24,14 +32,15 @@ def create_tables():
 
 
 # API endpoint to save a statement to the database
-@app.post("/upload-pdf/")
-def upload_csv_and_save_to_db(db: psycopg2.extensions.connection = Depends(get_db), pdf_file: UploadFile = File(...)):
-    
-    cleaned_csv_content = convert_pdf_to_csv(pdf_file)
-    if not cleaned_csv_content :
-        raise HTTPException(status_code=400, detail="Failed to convert PDF to CSV")
+@app.post("/convert_pdf/")
+def convert_to_csv_and_save_to_db( file_path: str, db: psycopg2.extensions.connection = Depends(get_db)):
 
     try:
+        print("main.py - Converting pdf file to CSV")
+        cleaned_csv_content = convert_pdf_to_csv(file_path)
+        if not cleaned_csv_content :
+            raise HTTPException(status_code=400, detail="Failed to convert PDF to CSV")
+        
         # Split the CSV content into lines
         csv_data = cleaned_csv_content.splitlines()
         #read csv data
@@ -39,7 +48,6 @@ def upload_csv_and_save_to_db(db: psycopg2.extensions.connection = Depends(get_d
         next(csv_reader)  # Skip the header row
         cur = db.cursor()
         #store csv data in mysql
-        # For each row in the CSV, insert into the database
         for row in csv_reader:
             sql = """
             INSERT INTO statement_table (user_name, mobile_number, transaction_date, transaction_time, 
@@ -69,12 +77,30 @@ def upload_csv_and_save_to_db(db: psycopg2.extensions.connection = Depends(get_d
         db.commit()
         cur.close()
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error processing CSVv: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error processing CSV: {str(e)}")
+
     get_transactions(db, user_name)
     return "message: Transactions uploaded and saved in Json format successfully"
 
 
-# A function for getting the saved transactions
+@app.post("/decrypt_pdf/")
+def decrypt_pdf(pdf_file: UploadFile = File):
+    # Ensure the directory exists
+    SAVE_DIR = "encrypted_pdfs"
+    os.makedirs(SAVE_DIR, exist_ok=True)
+    file_location = os.path.join(SAVE_DIR, pdf_file.filename)
+    # save the encrypted pdf in the folder
+    with open(file_location, "wb") as buffer:
+        shutil.copyfileobj(pdf_file.file, buffer)
+    #decrypt  the  file
+    decrypted_file_location = decrypter(pdf_file.filename, password=379549)
+    url = "http://127.0.0.1:8000/convert_pdf/"
+    print("main.py - Sending a post request with file location: ", decrypted_file_location)
+    response = requests.post(url, params={"file_path": decrypted_file_location})
+    print(response.text)
+
+    print("end")    
+
 def get_transactions(db, user_name):
     cur = db.cursor()
     sql = """SELECT user_name, mobile_number, transaction_date, transaction_time, category, paid_to, amount_in, amount_out FROM statement_table WHERE user_name = %s ORDER BY transaction_date DESC;"""
@@ -90,3 +116,6 @@ def get_transactions(db, user_name):
     with open("user_statement.json", "w") as file:
         json.dump(transactions, file, indent=4, default=str)
     return "transaction saved in json format"
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000 )

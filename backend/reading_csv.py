@@ -5,7 +5,8 @@ from io import StringIO
 def csv_cleaner(csvFile):
     try:
         df = pd.read_csv(csvFile, sep=",", engine="python")
-
+        if df.empty:
+            raise ValueError("CSV file is empty")
         df.columns = df.columns.str.lower()
 
         # Extract customer details (assuming they are in the first row)
@@ -98,8 +99,8 @@ def csv_cleaner(csvFile):
         transactions_df.to_csv(csv_buffer, index=False)
         csv_buffer.seek(0)
         csv_content = csv_buffer.getvalue()
-        print("Cleaned transactions processed successfully")
+        print("rc.py - Cleaned transactions processed successfully")
         return csv_content
     except Exception as e:
-        print(f"ERROR: {e}")
+        print(f"rc.py - ERROR cleaning csv: {e}")
         return None

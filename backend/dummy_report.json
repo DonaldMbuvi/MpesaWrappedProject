@@ -17,7 +17,8 @@
 		"top_spending_habits": {
 			"biggest_transactions": {
 				"biggest_amount": 5000,
-				"biggest_date": "2025-02-26"
+				"biggest_date": "2025-02-26",
+				"its_category": "Bank"
 			},
 			"most_frequent_recepient": "Alice",
 			"most_visited_paybill_or_till": 12000

@@ -1,62 +1,137 @@
-#CONVERTING PDF TO CSV
-from io import StringIO
-import fitz
+from pypdf import PdfReader, PdfWriter
+import pdfplumber
 import pandas as pd
 import re
+import os
 
-from reading_csv import csv_cleaner
+def decrypt_mpesa_statement(pdf_path, passcode):
+    try:
+        with open(pdf_path, "rb") as file:
+            reader = PdfReader(file)
+            if reader.is_encrypted():
+                if reader.decrypt(passcode):
+                    print("Decryption successful!")
+                    decrypted_pdf_path = os.path.splitext(pdf_path)[0] + "_decrypted.pdf"
+                    writer = PdfWriter()
+                    for page in reader.pages:
+                        writer.add_page(page)
+                    with open(decrypted_pdf_path, "wb") as output_file:
+                        writer.write(output_file)
+                    return decrypted_pdf_path
+                else:
+                    print("Incorrect passcode. Decryption failed.")
+                    return None
+            else:
+                print("File not encrypted")
+                return "pdf_path"
+    except Exception as e:
+        print(f"Error decrypting pdf: {e}")
+        return None
 
 def convert_pdf_to_csv(pdf_file):
-
+    extracted_transactions = []
     try:
-        # Read the uploaded file into memory
-        pdf_bytes = pdf_file.file.read()
-
-        # Open the PDF from bytes
-        doc = fitz.open("pdf", pdf_bytes)  # "pdf" forces PyMuPDF to read from bytes
-
-        data = []
-        customer_name= None 
-        mobile_number= None
-        
-        for page_nm in range(len(doc)):
-            page = doc[page_nm]
-            text = page.get_text("text")
-
-            name_match= re.search(r"Customer Name: \s*(.*)", text)
-            mobile_match= re.search(r"Mobile Number: \s*(\d+)", text)
+        with pdfplumber.open(pdf_file) as pdf:
+            customer_name = ""
+            mobile_number = ""
             
-            if name_match:
-                customer_name= name_match.group(1).strip()
-            if mobile_match:
-                mobile_number=mobile_match.group(1).strip()
+            for page in pdf.pages:
+                text = page.extract_text()
+                if not text:
+                    continue
                 
-            transactions = re.findall(
-                r'([A-Z0-9]{10})\s+(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\s+([\s\S]*?)\s+(COMPLETED|FAILED|PENDING)\s+([\d,]+\.\d{2})?\s+([\d,]+\.\d{2})?\s+([\d,]+\.\d{2})?',
-                text
-            )
+                # Extract customer info
+                if not customer_name:
+                    name_match = re.search(r"Customer\s*Name:\s*(.*?)(?:\n|$)", text, re.IGNORECASE)
+                    if name_match:
+                        customer_name = name_match.group(1).strip()
+                
+                if not mobile_number:
+                    mobile_match = re.search(r"Mobile\s*Number:\s*([0-9]{10,12})", text, re.IGNORECASE)
+                    if mobile_match:
+                        mobile_number = mobile_match.group(1).strip()
+                
+                # Process transactions line by line
+                lines = text.split('\n')
+                current_transaction = None
+                
+                for line in lines:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    
+                    # New transaction starts with TC
+                    if line.startswith('TC') and len(line.split()) >= 6:
+                        if current_transaction:
+                            extracted_transactions.append(current_transaction)
+                        
+                        parts = line.split()
+                        current_transaction = {
+                            "Receipt No": parts[0],
+                            "Completion Time": f"{parts[1]} {parts[2]}",
+                            "Details": "",
+                            "Transaction Status": parts[-3],
+                            "Paid In": None,
+                            "Withdrawn": None,
+                            "Balance": parts[-1] if parts[-1] != '-' else None,
+                            "User Name": customer_name,
+                            "Mobile Number": mobile_number
+                        }
+                        
+                        # Process the middle part of the transaction line to identify details
+                        # and determine if it's a Paid In or Withdrawn transaction
+                        middle_parts = ' '.join(parts[3:-3])
+                        current_transaction["Details"] = middle_parts
+                        
+                        # Check if Withdrawn is present (it would be the second-to-last element)
+                        withdrawn_val = parts[-2]
+                        if withdrawn_val != '-' and withdrawn_val[0] == '-':
+                            # Negative amount indicates withdrawal
+                            current_transaction["Withdrawn"] = withdrawn_val
+                        elif withdrawn_val != '-' and not withdrawn_val[0] == '-':
+                            # Positive amount without negative sign is a deposit
+                            current_transaction["Paid In"] = withdrawn_val
+                    
+                    # Handle multi-line details
+                    elif current_transaction and not line.startswith('TC'):
+                        current_transaction["Details"] += ' ' + line
+                
+                # Add the last transaction
+                if current_transaction:
+                    extracted_transactions.append(current_transaction)
 
-            for transaction in transactions:
-                receipt_no, completion_time, details, status, paid_in, withdraw, balance = transaction
-                details = " ".join(details.splitlines()).strip()  # Join multiline details into one line
-                data.append([receipt_no, completion_time, details, status, paid_in, withdraw, balance])
+        # Create DataFrame and clean data
+        if extracted_transactions:
+            df = pd.DataFrame(extracted_transactions)
+            
+            # Convert numeric columns
+            for col in ['Paid In', 'Withdrawn', 'Balance']:
+                df[col] = df[col].astype(str).str.replace(',', '')
+                df[col] = pd.to_numeric(df[col], errors='coerce')
+                df[col] = df[col].where(pd.notnull(df[col]), None)
+            
+            # Remove duplicates
+            df = df.drop_duplicates(subset=['Receipt No', 'Completion Time', 'Details'], keep='first')
+            
+            # Save to CSV with proper NULL handling
+            csv_file = os.path.splitext(pdf_file)[0] + ".csv"
+            df.to_csv(csv_file, index=False, na_rep='NULL')
+            print(f"Successfully saved {len(df)} transactions to {csv_file}")
+            return True
+        else:
+            print("No transactions extracted - check PDF format")
+            return False
 
-        doc.close()
+    except Exception as e:
+        print(f"Error processing PDF: {str(e)}")
+        return False
 
-        # Create DataFrame
-        df = pd.DataFrame(data, columns=["Receipt No", "Completion Time", "Details", "Transaction Status", "Paid In", "Withdraw", "Balance"])
-        df["Customer Name"]= customer_name
-        df["Mobile Number"]= mobile_number
-        
-        # Convert to CSV (in-memory)
-        csv_buffer = StringIO()
-        df.to_csv(csv_buffer, index=False)
-        csv_buffer.seek(0)  # Reset pointer
+if __name__ == "__main__":
+    pdf_path = "MpesaStatement.pdf"
+    user_passcode = input("Enter passcode: ")
+    
+    decrypted_file = decrypt_mpesa_statement(pdf_path, user_passcode)
 
-        # Clean CSV without writing to disk
-        cleaned_csv_content  = csv_cleaner(csv_buffer)
-
-        return cleaned_csv_content   # Return cleaned CSV directly
-    except Exception as e:	
-        print(f"Error: {e}. Please check if the file exists and is a valid PDF.")
-    return  None
+    if decrypted_file:
+        print(f"Decrypted file saved at: {decrypted_file}")
+        convert_pdf_to_csv(decrypted_file)

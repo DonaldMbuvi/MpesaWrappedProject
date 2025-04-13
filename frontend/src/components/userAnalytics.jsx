@@ -3,8 +3,32 @@ import { useContext } from "react";
 import { ThemeContext } from "../context/ThemeContext";
 import {FaSun, FaMoon} from "react-icons/fa";
 
+
+import {Bar } from "react-chartjs-2";
+import { BarElement, CategoryScale, Chart as ChartJS,Legend, LinearScale, Title, Tooltip } from "chart.js";
+ChartJS.register(CategoryScale, LinearScale, BarElement,Title, Tooltip,Legend)
 const AnalyticsPage=()=>{
     const { theme, toggleTheme } = useContext(ThemeContext);
+    const option = {
+      responsive: true,
+      plugins: {
+        legend: { position: "top"},
+        title: {
+          display: true,
+          text: "Your Monthly expenditure"
+        },
+      },
+    };
+    const data = {
+      labels: ["jan", "feb", "march"],
+      datasets: [
+        {
+          label: "Amount spent",
+          data: [20,40,60],
+          backgroundColor: "green",        
+        },
+      ],
+    };
     return(
 <div style={styles.wrapper}>
         <div style={styles.container}>
@@ -16,6 +40,7 @@ const AnalyticsPage=()=>{
                     {theme === "light" ? <FaMoon size={18}/> :<FaSun size={18}/>}
                   </button>
             <h1>User Analytics Page</h1>
+            <Bar options={option} data={data} />
             <Link to="/results">
             <button style={styles.button}
             onMouseEnter={(e) => {
@@ -32,7 +57,7 @@ const AnalyticsPage=()=>{
         </div>
         </div>
     );
-}
+};
 
 const styles = {
     wrapper: {

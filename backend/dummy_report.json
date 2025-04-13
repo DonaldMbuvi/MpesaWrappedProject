@@ -1,0 +1,95 @@
+{
+	"results_page": {
+		"essentials": {
+			"total_spent": 120000,
+			"total_received": 140000,
+			"net_flow": -20000,
+			"top_month": {
+				"month_name": "December",
+				"month_amount": 15000
+			},
+			"categories": {
+				"send_money": 45000,
+				"Till": 38000,
+				"Pay_Bill": 37000
+			}
+		},
+		"top_spending_habits": {
+			"biggest_transactions": {
+				"biggest_amount": 5000,
+				"biggest_date": "2025-02-26"
+			},
+			"most_frequent_recepient": "Alice",
+			"most_visited_paybill_or_till": 12000
+		},
+		"time_based": {
+			"most_active_day": {
+				"date": "2024-12-23",
+				"number_of_transactions": 20,
+				"active_day_amount": 3200
+			},
+			"inactive_days": {
+				"day_1": "2025-01-26",
+				"day_2": "2025-04-21",
+				"day_3": "2025-07-16",
+				"more_days_flag": "True"
+				},
+			"peak_transaction_period": {
+				"period_name": "Evening",
+				"percentage": "42%"
+			}			
+		}
+	},
+	"user_analytics_page": {
+		"monthly_transactions": {
+			"January": 9000,
+			"February": 8500,
+			"March": 9800,
+			"April": 10200,
+			"May": 9500,
+			"June": 9800,
+			"July": 10500,
+			"August": 9800,
+			"September": 10200,
+			"October": 11500,
+			"November": 12800,
+			"December": 15000
+		},
+		"most_frequent_receipients": {
+			"recipient_1": {
+				"recipient_name": "Alice",
+				"recipient_amount": 14500
+			},
+			"recipient_2": {
+				"recipient_name": "john",
+				"recipient_amount": 12800
+			},
+			"recipient_3": {
+				"recipient_name": "Doe",
+				"recipient_amount": 8700
+			},
+			"recipient_4": {
+				"recipient_name": "Jimmy",
+				"recipient_amount": 6400
+			},
+			"recipient_5": {
+				"recipient_name": "Ann",
+				"recipient_amount": 4200
+			}
+		},
+		"transaction_periods": {
+			"early_morning": 120,
+			"morning": 350,
+			"afternoon": 420,
+			"evening": 510,
+			"night": 180,
+			"late_night": 80
+		},
+		"fuliza": {
+			"amount": 12000,
+			"fuliza_fee": 1200
+		},
+		"total_transaction_cost": 2400,
+		"number_of_inactive_days": 20
+	}
+}

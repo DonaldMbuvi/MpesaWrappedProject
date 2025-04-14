@@ -1,7 +1,0 @@
-fastapi
-uvicorn
-pandas
-pypdf
-pymupdf
-psycopg2
-re

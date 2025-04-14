@@ -4,6 +4,7 @@ import MainPage from "./components/mainPage";
 import TutorialPage from "./components/TutorialPage";
 import ResultPage from "./components/resultPage";
 import AnalyticsPage from "./components/userAnalytics";
+import DemoPage from "./components/demoPage"
 import { ThemeProvider } from "./context/ThemeContext";
 const App =() => {
   
@@ -17,6 +18,7 @@ const App =() => {
       <Route path="/main" element={<MainPage/>}/>
       <Route path="/results" element={<ResultPage/>}></Route>
       <Route path="/analytics" element={<AnalyticsPage/>}></Route>
+      <Route path="/demo" element={<DemoPage />}></Route>
     </Routes>
    </Router>
    </ThemeProvider>

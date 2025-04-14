@@ -8,10 +8,16 @@ from  models import CREATE_STATEMENT_TABLE
 from database import get_db
 from pypdf import PdfReader
 from pdf_to_csv import convert_pdf_to_csv
+from fastapi.middleware.cors import CORSMiddleware
 
 # Initialize FastAPI app
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins = ["http://localhost:5174", "http://localhost:3173" ],
+    allow_methods="GET"
+)
 # Create database table upon start up if they don't exist
 @app.on_event("startup")
 def create_tables():
@@ -80,13 +86,16 @@ def get_transactions(db, user_name):
     sql = """SELECT user_name, mobile_number, transaction_date, transaction_time, category, paid_to, amount_in, amount_out FROM statement_table WHERE user_name = %s ORDER BY transaction_date DESC;"""
     cur.execute(sql, (user_name,))
     transactions = cur.fetchall()
-    cur.close()
-
-    
+    cur.close()    
     if not transactions:
         raise HTTPException(status_code=404, detail="No transactions found for this user") 
-
     #save the statement in json file
     with open("user_statement.json", "w") as file:
         json.dump(transactions, file, indent=4, default=str)
     return "transaction saved in json format"
+
+@app.get("/report")
+async def get_json_report():
+    with open("dummy_report.json", "r") as f:
+        return json.load(f)
+    

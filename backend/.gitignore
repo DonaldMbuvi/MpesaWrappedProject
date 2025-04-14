@@ -1,5 +1,0 @@
-del*
-venv/
-__pycache__/
-*.pdf
-*.decrypted.pdf

@@ -87,7 +87,7 @@
 			"late_night": 80
 		},
 		"fuliza": {
-			"amount": 12000,
+			"amount_borrowed": 12000,
 			"fuliza_fee": 1200
 		},
 		"total_transaction_cost": 2400,

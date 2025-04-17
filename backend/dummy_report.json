@@ -20,8 +20,16 @@
 				"biggest_date": "2025-02-26",
 				"its_category": "Bank"
 			},
-			"most_frequent_recepient": "Alice",
-			"most_visited_paybill_or_till": 12000
+			"most_frequent_recepient": {
+				"name": "Alice",
+				"frequency": 21,
+				"amount": 5000
+			} ,
+			"most_visited_paybill_or_till": {
+				"type": "Till Payment",
+				"name": "VIVIAN ATIENO", 
+				"frequency": 7,
+				"amount": 4000
 		},
 		"time_based": {
 			"most_active_day": {
@@ -59,23 +67,55 @@
 		"most_frequent_receipients": {
 			"recipient_1": {
 				"recipient_name": "Alice",
-				"recipient_amount": 14500
+				"recipient_amount": 14500,
+				"frequency": 21
 			},
 			"recipient_2": {
 				"recipient_name": "john",
-				"recipient_amount": 12800
+				"recipient_amount": 12800,
+				"frequency": 18
 			},
 			"recipient_3": {
 				"recipient_name": "Doe",
-				"recipient_amount": 8700
+				"recipient_amount": 8700,
+				"frequency": 15
 			},
 			"recipient_4": {
 				"recipient_name": "Jimmy",
-				"recipient_amount": 6400
+				"recipient_amount": 6400,
+				"frequency": 11
 			},
 			"recipient_5": {
 				"recipient_name": "Ann",
-				"recipient_amount": 4200
+				"recipient_amount": 4200,
+				"frequency": 8
+			}
+		},
+		"top_recepients": {
+			"recipient_1": {
+				"recipient_name": "Alice",
+				"recipient_amount": 14500,
+				"frequency": 21
+			},
+			"recipient_2": {
+				"recipient_name": "john",
+				"recipient_amount": 12800,
+				"frequency": 18
+			},
+			"recipient_3": {
+				"recipient_name": "Doe",
+				"recipient_amount": 8700,
+				"frequency": 15
+			},
+			"recipient_4": {
+				"recipient_name": "Jimmy",
+				"recipient_amount": 6400,
+				"frequency": 11
+			},
+			"recipient_5": {
+				"recipient_name": "Ann",
+				"recipient_amount": 4200,
+				"frequency": 8
 			}
 		},
 		"transaction_periods": {
@@ -91,7 +131,12 @@
 			"fuliza_fee": 1200
 		},
 		"total_transaction_cost": 2400,
-		"number_of_inactive_days": 20
+		"number_of_inactive_days": 20,
+		"airtime": 300,
+		"mshwari": {
+			"amount_in": 4000,
+			"amount_out": 2000
+		}
 	}
   }
-
+}

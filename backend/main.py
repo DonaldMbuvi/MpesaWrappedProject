@@ -1,12 +1,13 @@
-from io import StringIO
 import json
 import psycopg2
+import asyncio
+from report_generator import report_maker
 from database import get_db_connection
-from fastapi import FastAPI, HTTPException, UploadFile, File, Depends, Query
+from fastapi import FastAPI, HTTPException, UploadFile, File, Depends
+from fastapi.responses import JSONResponse
 import csv
-from  models import CREATE_STATEMENT_TABLE
+from  models import CREATE_INDEX, CREATE_REPORT_TABLE, CREATE_STATEMENT_TABLE
 from database import get_db
-from pypdf import PdfReader
 from pdf_to_csv import convert_pdf_to_csv
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -15,7 +16,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins = ["http://localhost:5174", "http://localhost:3173" ],
+    allow_origins = ["http://localhost:5174", "http://localhost:5173" ],
     allow_methods="GET"
 )
 # Create database table upon start up if they don't exist
@@ -24,6 +25,8 @@ def create_tables():
     db = get_db_connection()
     cur = db.cursor()
     cur.execute(CREATE_STATEMENT_TABLE)
+    cur.execute(CREATE_REPORT_TABLE)
+    cur.execute(CREATE_INDEX)
     db.commit()
     cur.close()
     db.close()
@@ -76,26 +79,38 @@ def upload_csv_and_save_to_db(db: psycopg2.extensions.connection = Depends(get_d
         cur.close()
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error processing CSVv: {str(e)}")
-    get_transactions(db, user_name)
+    rep = asyncio.run(report_maker(db, user_name))   
+    print(rep)
     return "message: Transactions uploaded and saved in Json format successfully"
 
 
-# A function for getting the saved transactions
-def get_transactions(db, user_name):
-    cur = db.cursor()
-    sql = """SELECT user_name, mobile_number, transaction_date, transaction_time, category, paid_to, amount_in, amount_out FROM statement_table WHERE user_name = %s ORDER BY transaction_date DESC;"""
-    cur.execute(sql, (user_name,))
-    transactions = cur.fetchall()
-    cur.close()    
-    if not transactions:
-        raise HTTPException(status_code=404, detail="No transactions found for this user") 
-    #save the statement in json file
-    with open("user_statement.json", "w") as file:
-        json.dump(transactions, file, indent=4, default=str)
-    return "transaction saved in json format"
-
 @app.get("/report")
-async def get_json_report():
-    with open("dummy_report.json", "r") as f:
-        return json.load(f)
+async def get_report(user_name: str, db = Depends(get_db_connection)):
+    """
+    Retrieve the most recent report for a user
+    """
+    try:
+        cur = db.cursor()
+        
+        # Fetch the most recent report for this user
+        cur.execute("""
+            SELECT report_data 
+            FROM report_table 
+            WHERE user_name = %s
+            ORDER BY created_at DESC
+            LIMIT 1
+        """, (user_name,))
+        
+        report = cur.fetchone()
+        cur.close()
+        
+        if not report:
+            raise HTTPException(status_code=404, detail="No report found for this user")
+        
+        # Return the report exactly as stored in the database
+        return JSONResponse(content=report['report_data'])
     
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")

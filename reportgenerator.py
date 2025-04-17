@@ -1,6 +1,6 @@
 import json
 from collections import defaultdict
-from datetime import datetime
+from datetime import datetime, timedelta
 import heapq
 import os
 
@@ -265,6 +265,7 @@ def format_report(report, output_format='json', time_frame=None):
         return json.dumps(report, indent=2, default=str)
 
 if __name__ == "__main__":
+    
     # Get the directory where the script is located
     script_dir = os.path.dirname(os.path.abspath(__file__))
     json_file = os.path.join(script_dir, 'transactions.json')

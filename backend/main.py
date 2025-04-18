@@ -19,7 +19,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins = ["http://localhost:5174", "http://localhost:5173" ],
+    allow_origins = ["http://localhost:5174", "http://localhost:5173", "https://mpesa-wrapped-prod.vercel.app" ],
     allow_methods="GET"
 )
 # Create database table upon start up if they don't exist

@@ -1,7 +1,8 @@
 from http.client import HTTPException
 import json
 from collections import defaultdict
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date, time
+
 import os
 
 def load_transactions(file_path):
@@ -307,7 +308,7 @@ def generate_report(transactions):
     report["user_analytics_page"]["transaction_periods"] = dict(report["user_analytics_page"]["transaction_periods"])
     return report
 
-async def save_report_to_db(db, user_name, report_data):
+async def save_report_to_db(db, user_id, user_name, report_data):
     """Save the generated report to the database"""
     try:
         cur = db.cursor()
@@ -323,17 +324,17 @@ async def save_report_to_db(db, user_name, report_data):
             # Update existing report
             cur.execute("""
                 UPDATE report_table 
-                SET report_data = %s, updated_at = CURRENT_TIMESTAMP
+                SET report_data = %s, updated_at = CURRENT_TIMESTAMP, user_id = %s
                 WHERE user_name = %s
                 RETURNING report_id
-            """, (json.dumps(report_data), user_name))
+            """, (json.dumps(report_data), user_id, user_name))
         else:
             # Insert new report
             cur.execute("""
-                INSERT INTO report_table (user_name, report_data)
-                VALUES (%s, %s)
+                INSERT INTO report_table (user_id, user_name, report_data)
+                VALUES (%s, %s, %s)
                 RETURNING report_id
-            """, (user_name, json.dumps(report_data)))
+            """, (user_id, user_name, json.dumps(report_data)))
         
         db.commit()
         cur.close()
@@ -342,12 +343,11 @@ async def save_report_to_db(db, user_name, report_data):
         db.rollback()
         raise HTTPException(status_code=500, detail=f"Error saving report to database: {str(e)}")
         return False
-async  def report_maker(db, user_name):
-    start_time = datetime.now()
+async  def report_maker(db, user_id, user_name):
     try:
         cur = db.cursor()
         sql = """
-        SELECT user_name, mobile_number, transaction_date, transaction_time,
+        SELECT user_name, transaction_date, transaction_time,
                category, paid_to, amount_in, amount_out
         FROM statement_table
         WHERE user_name = %s
@@ -360,7 +360,16 @@ async  def report_maker(db, user_name):
 
         if not rows:
             raise ValueError("No transactions found")
+        
+        # Convert datetime.date and datetime.time to strings
+        for row in rows:
+            for key, value in row.items():
+                if isinstance(value, (date, time)):
+                    row[key] = value.isoformat()
 
+        # Save to JSON
+        # with open("user.json", "w") as f:
+        #     json.dump(rows, f, indent=4)
         # Convert rows to list of dicts and convert date objects to strings
         transactions = []
         for row in rows:
@@ -382,19 +391,16 @@ async  def report_maker(db, user_name):
         report = generate_report(transactions)
         
         # Save to file
-        with open("draft2_report.json", "w") as f:
-            json.dump(report, f, indent=2)
+        # with open("draft2_report.json", "w") as f:
+        #     json.dump(report, f, indent=2)
         
-        print("Report generated successfully as draft2_report.json")
         # Save to database
-        report_id = await save_report_to_db(db, user_name, report)
+        report_id = await save_report_to_db(db, user_id, user_name, report)
         if not report_id:
             raise Exception("Failed to save report to database")
 
                 
-        end_time = datetime.now()
-        run_time = end_time - start_time
-        print(f"Runtime: {run_time}")
-        return "Report generated successfully"
+
+        return "Report generated and saved to report_table successfully"
     except Exception as e:
         return f"Error generating report {e}"

@@ -122,7 +122,7 @@ const MainPage = () => {
         ? "http://127.0.0.1:8000" 
         : "https://mpesawrappedproject-backend-prod.onrender.com";
       // Important: Don't set Content-Type header manually!
-      const response = await fetch(`{baseUrl}/upload-pdf/`, {
+      const response = await fetch(`${baseUrl}/upload-pdf/`, {
         method: 'POST',
         body: formData,
         // Let browser set headers automatically

@@ -1,28 +1,28 @@
-## database.py
-from typing import Generator
+import os
 import psycopg2
 from psycopg2.extras import RealDictCursor
+from typing import Generator
 
-# Database connection settings
-db_name = "wrapped_db"
-db_user = "postgres"
-db_password = "safcoM"
-db_host = "localhost"
-db_port = "5432"
+# Local database settings (fallback)
+LOCAL_DB_CONFIG = {
+    "dbname": "wrapped_db",
+    "user": "postgres",
+    "password": "safcoM",
+    "host": "localhost",
+    "port": "5432",
+    "cursor_factory": RealDictCursor
+}
 
-# Function to get a database connection
 def get_db_connection():
-    conn = psycopg2.connect(
-        dbname=db_name,
-        user=db_user,
-        password=db_password,
-        host=db_host,
-        port=db_port,
-        cursor_factory=RealDictCursor
-    )
-    return conn
+    db_url = os.environ.get("DATABASE_URL")
+    
+    if db_url:
+        # Use DATABASE_URL for Render or production
+        return psycopg2.connect(db_url, cursor_factory=RealDictCursor)
+    else:
+        # Fallback to local dev config
+        return psycopg2.connect(**LOCAL_DB_CONFIG)
 
-# Dependency for database connection
 def get_db() -> Generator:
     conn = get_db_connection()
     try:

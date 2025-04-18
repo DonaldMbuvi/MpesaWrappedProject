@@ -117,9 +117,12 @@ const MainPage = () => {
       formData.append('pdf_file', selectedFile);  // Must be 'pdf_file'
       formData.append('user_id', userId);        // Must be 'user_id'
       if (pin) formData.append('pin', pin);      // Optional 'pin'
-  
+      const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+      const baseUrl = isLocal 
+        ? "http://127.0.0.1:8000" 
+        : "https://mpesawrappedproject-backend-prod.onrender.com";
       // Important: Don't set Content-Type header manually!
-      const response = await fetch('http://localhost:8000/upload-pdf/', {
+      const response = await fetch(`{baseUrl}/upload-pdf/`, {
         method: 'POST',
         body: formData,
         // Let browser set headers automatically

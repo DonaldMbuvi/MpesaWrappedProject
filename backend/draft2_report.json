@@ -1,123 +1,136 @@
 {
   "results_page": {
     "essentials": {
-      "total_spent": 3342.0,
-      "total_received": 2000.0,
-      "net_flow": -1342.0,
+      "total_spent": 276120.0,
+      "total_received": 40000.0,
+      "net_flow": -236120.0,
       "top_month": {
-        "month_name": "April",
-        "month_amount": 3342.0
+        "month_name": "March",
+        "month_amount": 243598.0
       },
       "categories": {
-        "send_money": 2680.0,
-        "Pochi la Biashara": 50.0,
-        "Till": 390.0
+        "Pochi la Biashara": 4300.0,
+        "send_money": 55234.0,
+        "Till": 22106.0,
+        "Pay_Bill": 142268.0
       }
     },
     "top_spending_habits": {
       "biggest_transactions": {
-        "biggest_amount": 1000.0,
-        "biggest_date": "2025-04-12",
-        "its_category": "Send Money"
+        "biggest_amount": 54000.0,
+        "biggest_date": "2025-03-11",
+        "its_category": "Pay Bill"
       },
       "most_frequent_recepient": {
         "name": "NEWTON   KIPRONO",
-        "frequency": 4,
-        "amount": 465.0
+        "frequency": 30,
+        "amount": 26610.0
       },
       "top_recepient": {
-        "name": "SADIA MOHAMED",
-        "amount": 1000.0
+        "name": "NEWTON   KIPRONO",
+        "amount": 26610.0
       },
       "most_visited_paybill_or_till": {
         "type": "Till Payment",
         "name": "EDWIN LUSICHI",
-        "frequency": 1,
-        "amount": 100.0
+        "frequency": 10,
+        "amount": 1000.0
       }
     },
     "time_based": {
       "most_active_day": {
-        "date": "2025-04-12",
-        "number_of_transactions": 20,
-        "active_day_amount": 2244.0
+        "date": "2025-03-24",
+        "number_of_transactions": 58,
+        "active_day_amount": 6820.0
       },
-      "inactive_days": {},
+      "inactive_days": {
+        "day_1": "2025-03-23",
+        "day_2": "2025-04-02",
+        "day_3": "2025-04-03",
+        "more_days_flag": "True"
+      },
       "peak_transaction_period": {
-        "period_name": "",
-        "percentage": "0%"
+        "period_name": "Afternoon",
+        "percentage": "38%"
       }
     }
   },
   "user_analytics_page": {
     "monthly_transactions": {
-      "April": 3342.0
+      "April": 32522.0,
+      "March": 243598.0
     },
     "most_frequent_recepients": {
       "recipient_1": {
         "recipient_name": "NEWTON   KIPRONO",
-        "recipient_amount": 465.0,
-        "frequency": 4
+        "recipient_amount": 26610.0,
+        "frequency": 30
       },
       "recipient_2": {
-        "recipient_name": "SADIA MOHAMED",
-        "recipient_amount": 1000.0,
-        "frequency": 1
+        "recipient_name": "Akanga Laventah Khayeshe",
+        "recipient_amount": 1150.0,
+        "frequency": 12
       },
       "recipient_3": {
-        "recipient_name": "BRUCE OCHIEL KOLA",
-        "recipient_amount": 500.0,
-        "frequency": 1
+        "recipient_name": "FLORA WANJUKI KIMOTHO",
+        "recipient_amount": 914.0,
+        "frequency": 10
       },
       "recipient_4": {
-        "recipient_name": "Bruno Eboko Liboyi",
-        "recipient_amount": 150.0,
-        "frequency": 1
+        "recipient_name": "PURITY KANGAI KALUNG'E",
+        "recipient_amount": 420.0,
+        "frequency": 8
       },
       "recipient_5": {
-        "recipient_name": "Elizabeth Kasiagira Wambulwa",
-        "recipient_amount": 150.0,
-        "frequency": 1
+        "recipient_name": "BRUCE OCHIEL KOLA",
+        "recipient_amount": 11000.0,
+        "frequency": 6
       }
     },
     "top_recepients": {
       "recipient_1": {
-        "recipient_name": "SADIA MOHAMED",
-        "recipient_amount": 1000.0,
-        "frequency": 1
+        "recipient_name": "NEWTON   KIPRONO",
+        "recipient_amount": 26610.0,
+        "frequency": 30
       },
       "recipient_2": {
         "recipient_name": "BRUCE OCHIEL KOLA",
-        "recipient_amount": 500.0,
-        "frequency": 1
+        "recipient_amount": 11000.0,
+        "frequency": 6
       },
       "recipient_3": {
-        "recipient_name": "NEWTON   KIPRONO",
-        "recipient_amount": 465.0,
+        "recipient_name": "SADIA MOHAMED",
+        "recipient_amount": 4000.0,
         "frequency": 4
       },
       "recipient_4": {
-        "recipient_name": "Bruno Eboko Liboyi",
-        "recipient_amount": 150.0,
-        "frequency": 1
+        "recipient_name": "Joan Mueni Munywoki",
+        "recipient_amount": 2800.0,
+        "frequency": 6
       },
       "recipient_5": {
-        "recipient_name": "Elizabeth Kasiagira Wambulwa",
-        "recipient_amount": 150.0,
-        "frequency": 1
+        "recipient_name": "Akanga Laventah Khayeshe",
+        "recipient_amount": 1150.0,
+        "frequency": 12
       }
     },
-    "transaction_periods": {},
+    "transaction_periods": {
+      "afternoon": 250,
+      "morning": 154,
+      "evening": 188,
+      "late_night": 40,
+      "early_morning": 10
+    },
     "fuliza": {
       "amount_borrowed": 0,
       "fuliza_fee": 0
     },
-    "total_transaction_cost": 62.0,
-    "number_of_inactive_days": 0,
-    "airtime_and_bundles": 160.0,
+    "total_transaction_cost": 1078.0,
+    "number_of_inactive_days": 9,
+    "airtime_and_bundles": 2732.0,
     "mshwari": {
-      "amount_in": 2000.0,
-      "amount_out": 0.0
+      "amount_in": 40000.0,
+      "amount_out": 48200.0
     }
   }
 }

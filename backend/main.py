@@ -3,13 +3,16 @@ import psycopg2
 import asyncio
 from report_generator import report_maker
 from database import get_db_connection
-from fastapi import FastAPI, HTTPException, UploadFile, File, Depends
+import logging
+from fastapi import FastAPI, HTTPException, UploadFile, File, Depends, Request, status,Query, Form
 from fastapi.responses import JSONResponse
 import csv
 from  models import CREATE_INDEX, CREATE_REPORT_TABLE, CREATE_STATEMENT_TABLE
 from database import get_db
 from pdf_to_csv import convert_pdf_to_csv
 from fastapi.middleware.cors import CORSMiddleware
+from typing import Optional
+from fastapi.exceptions import RequestValidationError
 
 # Initialize FastAPI app
 app = FastAPI()
@@ -34,7 +37,7 @@ def create_tables():
 
 # API endpoint to save a statement to the database
 @app.post("/upload-pdf/")
-def upload_csv_and_save_to_db(db: psycopg2.extensions.connection = Depends(get_db), pdf_file: UploadFile = File(...)):
+def upload_csv_and_save_to_db(db: psycopg2.extensions.connection = Depends(get_db), pdf_file: UploadFile = File(...) ,user_id: str = Form(...),  pin: Optional[str] = Form(None)):
     
     cleaned_csv_content = convert_pdf_to_csv(pdf_file)
     if not cleaned_csv_content :
@@ -51,7 +54,7 @@ def upload_csv_and_save_to_db(db: psycopg2.extensions.connection = Depends(get_d
         # For each row in the CSV, insert into the database
         for row in csv_reader:
             sql = """
-            INSERT INTO statement_table (user_name, mobile_number, transaction_date, transaction_time, 
+            INSERT INTO statement_table (user_id, user_name ,transaction_date, transaction_time, 
                                         category, paid_to, amount_in, amount_out)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
             """
@@ -67,11 +70,9 @@ def upload_csv_and_save_to_db(db: psycopg2.extensions.connection = Depends(get_d
                 amount_out = int(float(row[5].replace(',', ''))) if row[5] and row[5] != '0' else 0
                 
                 user_name = row[6]  # 'Julius Cherotich'
-                mobile_number = row[7]  # '254729008219'
-                
-                # Execute the SQL with the correct parameters
-                cur.execute(sql, (user_name, mobile_number, transaction_date, transaction_time,
-                                category, paid_to, amount_in, amount_out))
+
+                    # Execute the SQL with the correct parameters
+                cur.execute(sql, (user_id, user_name, transaction_date, transaction_time, category, paid_to, amount_in, amount_out))
             except (ValueError, IndexError) as e:
                 print(f"Error processing row {row}: {e}")
                 continue
@@ -79,27 +80,26 @@ def upload_csv_and_save_to_db(db: psycopg2.extensions.connection = Depends(get_d
         cur.close()
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error processing CSVv: {str(e)}")
-    rep = asyncio.run(report_maker(db, user_name))   
+    rep = asyncio.run(report_maker(db, user_id, user_name))   
     print(rep)
     return "message: Transactions uploaded and saved in Json format successfully"
 
 
 @app.get("/report")
-async def get_report(user_name: str, db = Depends(get_db_connection)):
+async def get_report(user_id: str = Query(...), db = Depends(get_db_connection)):
     """
     Retrieve the most recent report for a user
     """
     try:
         cur = db.cursor()
-        
         # Fetch the most recent report for this user
         cur.execute("""
             SELECT report_data 
             FROM report_table 
-            WHERE user_name = %s
+            WHERE user_id = %s
             ORDER BY created_at DESC
             LIMIT 1
-        """, (user_name,))
+        """, (user_id,))
         
         report = cur.fetchone()
         cur.close()
@@ -114,3 +114,10 @@ async def get_report(user_name: str, db = Depends(get_db_connection)):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
+    
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+	exc_str = f'{exc}'.replace('\n', ' ').replace('   ', ' ')
+	logging.error(f"{request}: {exc_str}")
+	content = {'status_code': 10422, 'message': exc_str, 'data': None}
+	return JSONResponse(content=content, status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)

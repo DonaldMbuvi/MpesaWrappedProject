@@ -55,11 +55,11 @@ def convert_pdf_to_csv(pdf_file):
 
         # Clean CSV without writing to disk
         cleaned_csv_content  = csv_cleaner(csv_buffer)
-        try: 
-            with open("cleaned.csv", "w") as f:
-                f.write(cleaned_csv_content)
-        except Exception as e:
-            print("failed to save csv")
+        # try: 
+        #     with open("cleaned.csv", "w") as f:
+        #         f.write(cleaned_csv_content)
+        # except Exception as e:
+        #     print("failed to save csv")
         return cleaned_csv_content   # Return cleaned CSV directly
     except Exception as e:	
         print(f"Error: {e}. Please check if the file exists and is a valid PDF.")

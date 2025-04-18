@@ -1,8 +1,8 @@
 CREATE_STATEMENT_TABLE = """
 CREATE TABLE IF NOT EXISTS statement_table (
     id SERIAL PRIMARY KEY,
+    user_id VARCHAR(50) NOT NULL,
     user_name VARCHAR(50) NOT NULL,
-    mobile_number VARCHAR(50) NOT NULL,
     transaction_date DATE NOT NULL,
     transaction_time TIME NOT NULL,
     category VARCHAR(50) NOT NULL,
@@ -14,7 +14,8 @@ CREATE TABLE IF NOT EXISTS statement_table (
 CREATE_REPORT_TABLE = """
 CREATE TABLE  IF NOT EXISTS  report_table (
     report_id SERIAL PRIMARY KEY,
-    user_name VARCHAR(100) NOT NULL,
+    user_id VARCHAR(50) NOT NULL,
+    user_name VARCHAR(50) NOT NULL,
     report_data JSONB NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

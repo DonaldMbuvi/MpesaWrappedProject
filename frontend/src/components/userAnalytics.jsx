@@ -53,9 +53,12 @@ const AnalyticsPage = () => {
         const params = new URLSearchParams();
         params.append('user_id', user_id);
         
-        const url = `http://127.0.0.1:8000/report?${params.toString()}`;
-        console.log("Requesting URL:", url);
-        
+	const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+	const baseUrl = isLocal 
+	    ? "http://127.0.0.1:8000" 
+	    : "https://mpesawrappedproject-backend-prod.onrender.com";
+	      
+	const url = `${baseUrl}/report?${params.toString()}`;
         const response = await fetch(url);
         const data = await response.json();
         

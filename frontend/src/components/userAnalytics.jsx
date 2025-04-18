@@ -53,10 +53,7 @@ const AnalyticsPage = () => {
         const params = new URLSearchParams();
         params.append('user_id', user_id);
         
-	const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
-	const baseUrl = isLocal 
-	    ? "http://127.0.0.1:8000" 
-	    : "https://mpesawrappedproject-backend-prod.onrender.com";
+	const baseUrl = "https://mpesawrappedproject-backend-prod.onrender.com"; //replace with http://127.0.0.1:8000
 	      
 	const url = `${baseUrl}/report?${params.toString()}`;
         const response = await fetch(url);

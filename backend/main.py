@@ -52,12 +52,9 @@ def upload_csv_and_save_to_db(db: psycopg2.extensions.connection = Depends(get_d
         cur = db.cursor()
         #store csv data in mysql
         # For each row in the CSV, insert into the database
+        
+        checker = 0
         for row in csv_reader:
-            sql = """
-            INSERT INTO statement_table (user_id, user_name ,transaction_date, transaction_time, 
-                                        category, paid_to, amount_in, amount_out)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
-            """
             try:
                 # Parse the date and time
                 transaction_date = row[0]  # '2025-02-27'
@@ -71,18 +68,43 @@ def upload_csv_and_save_to_db(db: psycopg2.extensions.connection = Depends(get_d
                 
                 user_name = row[6]  # 'Julius Cherotich'
 
-                    # Execute the SQL with the correct parameters
-                cur.execute(sql, (user_id, user_name, transaction_date, transaction_time, category, paid_to, amount_in, amount_out))
+                
+                if checker == 0:
+                    # 1. Check if the user_name exists only at first iteration
+                    cur.execute("""
+                        SELECT 1 FROM statement_table 
+                        WHERE user_name = %s
+                        LIMIT 1;
+                    """, (user_name,))
+                    user_exists = cur.fetchone() is not None
+
+                    # 2. delete the username
+                    if user_exists:
+                        # Update existing record
+                        delete_sql = """
+                            DELETE FROM statement_table
+                                WHERE user_name = %s;
+                        """
+                        cur.execute(delete_sql, (user_name,))
+                    checker += 1
+                # Insert new record
+                insert_sql = """
+                    INSERT INTO statement_table 
+                    (user_id, user_name, transaction_date, transaction_time, 
+                    category, paid_to, amount_in, amount_out)
+                    VALUES ( %s, %s, %s, %s, %s, %s, %s, %s);
+                """
+                cur.execute(insert_sql, (user_id, user_name, transaction_date, transaction_time, category, paid_to, amount_in, amount_out))
             except (ValueError, IndexError) as e:
-                print(f"Error processing row {row}: {e}")
-                continue
+                raise HTTPException(status_code=400, detail=f"Error processing row {row}: {e}")
+
         db.commit()
         cur.close()
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error processing CSVv: {str(e)}")
-    rep = asyncio.run(report_maker(db, user_id, user_name))   
-    print(rep)
-    return "message: Transactions uploaded and saved in Json format successfully"
+        raise HTTPException(status_code=500, detail=f"Error processing CSV: {str(e)}")
+    report_response = asyncio.run(report_maker(db, user_id, user_name))   
+    print(report_response)
+    return "message: Transactions uploaded and saved to the database successfully"
 
 
 @app.get("/report")

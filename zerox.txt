@@ -1,0 +1,6 @@
+      // background: theme === "light" ? "linear-gradient(360deg, #A8E6CF, #56AB2F)": "linear-gradient(300deg, #1E392A, #4E944F)",
+      // backgroundBlendMode: "multiply",
+//       backgroundImage: theme === "light" 
+//   ? "url('https://www.transparenttextures.com/patterns/diagmonds-light.png')" 
+//   : "url('https://www.transparenttextures.com/patterns/diagmonds.png')",
+// backgroundColor: theme === "light" ? "#A8E6CF" : "#1E392A",

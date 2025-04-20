@@ -102,4 +102,6 @@ def csv_cleaner(csvFile):
         return csv_content
     except Exception as e:
         print(f"ERROR: {e}")
+        import traceback
+        traceback.print_exc()
         return None

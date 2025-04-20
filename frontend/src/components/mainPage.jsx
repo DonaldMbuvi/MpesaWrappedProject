@@ -357,7 +357,7 @@ const MainPage = () => {
         
         <div style={styles.factsContainer}>
           <div style={styles.factCard}>
-            <h3 style={styles.factTitle}>Did You Know?</h3>
+            <h2 style={styles.factTitle}>Did You Know?</h2>
             <p style={styles.factText}>{funFacts[currentFactIndex]}</p>
           </div>
         </div>
@@ -548,18 +548,6 @@ const styles = {
     marginTop: "15px",
     fontWeight: "500",
   },
-  toggleButton: {
-    position: "absolute",
-    top: "20px",
-    right: "20px",
-    padding: "10px",
-    fontSize: "14px",
-    border: "none",
-    borderRadius: "5px",
-    background: "#444",
-    color: "#fff",
-    cursor: "pointer",
-  },
   bottomContainer: {
     position: "absolute",
     bottom: "20px",
@@ -586,7 +574,7 @@ const styles = {
     marginBottom: "15px",
   },
   factText: {
-    fontSize: "16px",
+    fontSize: "20px",
     lineHeight: "1.5",
     margin: "0",
   },

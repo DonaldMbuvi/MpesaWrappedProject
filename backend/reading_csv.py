@@ -6,7 +6,7 @@ def csv_cleaner(csvFile):
     try:
         df = pd.read_csv(csvFile, sep=",", engine="python")
 
-        df.columns = df.columns.str.lower()
+        df.columns = df.columns.str.strip().str.lower()
 
         # Extract customer details (assuming they are in the first row)
         customer_name = df["customer name"].iloc[0] if "customer name" in df.columns else "Unknown"
@@ -102,4 +102,6 @@ def csv_cleaner(csvFile):
         return csv_content
     except Exception as e:
         print(f"ERROR: {e}")
+        import traceback
+        traceback.print_exc()
         return None

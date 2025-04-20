@@ -27,3 +27,5 @@ virtual_environment/
 node_modules/
 node_modules/
 *.pdf
+delv/
+__pycache__/

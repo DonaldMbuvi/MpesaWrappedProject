@@ -12,7 +12,8 @@ import {
   Title, 
   Tooltip, 
   PointElement, 
-  LineElement 
+  LineElement ,
+  Filler
 } from "chart.js";
 import "./styles/AnalyticsPage.css";
 
@@ -24,7 +25,8 @@ ChartJS.register(
   Tooltip,
   Legend, 
   PointElement, 
-  LineElement
+  LineElement,
+  Filler
 );
 
 const AnalyticsPage = () => {
@@ -193,8 +195,8 @@ const AnalyticsPage = () => {
       {
         label: showAmountIn ? "Amount received" : "Amount spent",
         data: orderedMonthlyData.values,
-        backgroundColor: showAmountIn ? "rgba(46, 204, 113, 0.7)" : "rgba(52, 152, 219, 0.7)",
-        borderColor: showAmountIn ? "rgba(46, 204, 113, 1)" : "rgba(52, 152, 219, 1)",
+        backgroundColor: showAmountIn ? "rgba(46, 204, 113, 0.7)" : "rgba(46, 204, 113, 0.7)",
+        borderColor: showAmountIn ? "rgba(46, 204, 113, 1)" : "rgba(46, 204, 113, 0.7)",
         borderWidth: 1,
         borderRadius: 5
       },
@@ -510,37 +512,32 @@ const AnalyticsPage = () => {
 
       <div className="dashboard-tabs">
         <button className="dashboard-tab active">Overview</button>
-        <button className="dashboard-tab">Transactions</button>
-        <button className="dashboard-tab">Recipients</button>
-        <button className="dashboard-tab">Services</button>
       </div>
+    <div className="combo">
+      <div className="chart-container">
+        <div className="chart-header">
+          <h3 className="section-header">
+          <FaChartLine className="section-icon" />
+          Monthly Financial Activity
+          </h3>
+          <button 
+          onClick={() => setShowAmountIn(!showAmountIn)}
+          className="data-toggle"
+          aria-label={showAmountIn ? "Show spending data" : "Show income data"}
+          >
+          <FaExchangeAlt size={12} />
+          {showAmountIn ? 'Show Expenses' : 'Show Income'}
+          </button>
+        </div>
+          <div className="bar-chart">
+            <Bar options={barChartOptions} data={barChartData} height={300} />
+          </div>
+      </div>
+      <div className="chart-wrapper">
+          <PeriodLineGraph />
+          </div>
+    </div>
 
-	  <div className="main-chart-container">
-		<div className="chart-header">
-			<h3 className="section-header">
-			<FaChartLine className="section-icon" />
-			Monthly Financial Activity
-			</h3>
-			<button 
-			onClick={() => setShowAmountIn(!showAmountIn)}
-			className="data-toggle"
-			aria-label={showAmountIn ? "Show spending data" : "Show income data"}
-			>
-			<FaExchangeAlt size={12} />
-			{showAmountIn ? 'Show Expenses' : 'Show Income'}
-			</button>
-		</div>
-		<div className="chart-container">
-			<div className="bar-chart">
-			<div className="chart-wrapper">
-				<Bar options={barChartOptions} data={barChartData} height={300} />
-			</div>
-			</div>
-			<div className="chart-wrapper">
-			<PeriodLineGraph />
-			</div>
-		</div>
-		</div>
 
       <div className="info-cards-container">
         <FulizaCard data={fulizaData}/>

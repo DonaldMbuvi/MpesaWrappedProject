@@ -1,206 +1,154 @@
+MPESA FULL STATEMENT
+ 
+Customer Name:             Bruce kola
+Mobile Number:             254793271971
+Date of Statement:         20th 4 2025
+Statement Period:          20th 10 2024 - 20th 4 2025
  
 SUMMARY
  
  
 DETAILED STATEMENT
  
-M-PESA STATEMENT
-Customer Name:
-NEWTON null KIPRONO
-Mobile Number:
-0706730580
-Email Address:
-newtonsigei13105@gmail.com
-Statement Period:
-01 Apr 2025 - 09 Apr 2025
-Request Date:
-09 Apr 2025
 TRANSACTION TYPE
 PAID IN
 PAID OUT
-SEND MONEY:
+Cash Out
 0.00
-2,724.00
-RECEIVED MONEY:
-14,559.00
+179.00
+Send Money
+40,515.00
+26,271.00
+B2C Payment
+910.00
 0.00
-AGENT DEPOSIT:
+Pay Bill
 0.00
+2,961.00
+FSI Withdraw
+25,000.00
 0.00
-AGENT WITHDRAWAL:
+FSI Deposit
 0.00
-1,029.00
-LIPA NA M-PESA (PAYBILL):
+28,100.00
+KenyaRecharge
 0.00
-16,025.00
-LIPA NA M-PESA (BUY GOODS):
+1,204.00
+Customer Merchant Payment
 0.00
-3,304.00
-OTHERS:
-16,150.00
-8,056.00
+7,905.00
+Customer Airtime Purchase
+0.00
+3.00
+Customer Bundle Purchase
+0.00
+80.00
 TOTAL:
-30,709.00
-31,138.00
-Receipt No.
+66,425.00
+66,703.00
+Receipt No
 Completion Time
 Details
 Transaction Status
-Paid In
-Withdrawn
+Paid in
+Withdraw
+n
 Balance
-TD83YBHVD7
-2025-04-08 19:48:36
-Customer Transfer to -
-07******964 Wisley Ogwoka
-Completed
--100.00
-2,418.25
-TD82Y7T10G
-2025-04-08 19:34:52
-Airtime Purchase
-Completed
--10.00
-2,518.25
-TD82Y6VKTM
-2025-04-08 19:31:24
-Customer Transfer to -
-2547******563 RACHEL MARITIM
-Completed
--50.00
-2,528.25
-TD82Y6R23U
-2025-04-08 19:30:57
-Customer Transfer to -
-2547******563 RACHEL MARITIM
-Completed
--100.00
-2,578.25
-TD85Y5G1AT
-2025-04-08 19:26:07
-Merchant Payment Online to
-779959 - NAIVAS DEVELOPMENT
-HOUSE
-Completed
--70.00
-2,678.25
-TD81Y2P40L
-2025-04-08 19:16:04
-Merchant Payment Online to
-779959 - NAIVAS DEVELOPMENT
-HOUSE
-Completed
--267.00
-2,748.25
-TD89Y2G6R9
-2025-04-08 19:15:09
-Funds received from -
-07******971 Bruce kola
-Completed
-200.00
-3,015.25
-TD81XZRPLF
-2025-04-08 19:05:11
-Customer Transfer of Funds
-Charge
-Completed
--7.00
-2,815.25
-TD81XZRPLF
-2025-04-08 19:05:11
-Customer Payment to Small
-Business to - 2547******757 ANN
-KARIUKI
-Completed
--250.00
-2,822.25
-TD82XMSNHE
-2025-04-08 18:11:32
-Airtime Purchase
-Completed
--5.00
-3,072.25
-TD88XJ8UDU
-2025-04-08 17:54:58
-Airtime Purchase
-Completed
--5.00
-3,077.25
-TD85XIM8S1
-2025-04-08 17:52:01
-Customer Payment to Small
-Business to - 2547******381
-RICHARD MUIRURI
-Completed
--50.00
-3,082.25
-TD89VBV26N
-2025-04-08 09:44:26
-Customer Transfer to -
-07******343 SHARON
-MUNYEKENYE
-Completed
--100.00
-3,132.25
-TD89V77FDL
-2025-04-08 09:12:47
-Customer Transfer of Funds
-Charge
-Completed
--7.00
-3,232.25
-TD89V77FDL
-2025-04-08 09:12:47
-Customer Transfer to -
-2547******624 GREGORY
-IKUTWA
-Completed
--150.00
-3,239.25
-TD75TVVJJL
-2025-04-07 20:36:25
-Customer Bundle Purchase to
-4093441SAFARICOM DATA
-BUNDLES by - 07******580
-NEWTON KIPRONO
-Completed
--5.00
-3,389.25
-TD79TUHSDR
-2025-04-07 20:29:56
-Pay Bill to 400200 - Co-operative
-Bank Money Transfer Acc.
-868432
-Completed
--5.00
-3,394.25
-TD77T9GIKF
-2025-04-07 19:07:04
-Customer Payment to Small
-Business to - 2547******549
-JUSTUS MWANGI
-Completed
--100.00
-3,399.25
-TD78T5OK2I
-2025-04-07 18:52:55
-Airtime Purchase
-Completed
--1.00
-3,499.25
-TD77T1BZN3
-2025-04-07 18:35:15
-Customer Transfer to -
-07******186 Japhet Maore
-Completed
--30.00
-3,500.25
-Disclaimer: Any personal information shared with you should be handled in accordance with the Data Protection Act and only used for the purpose
-for which it was provided.
-Statement Verification Code
-To verify the validity of this M-PESA statement dial *334#, select My account and follow the
-prompts to enter the code.
-For self-help dial *334# | Web:  www.safaricom.co.ke | Twitter: @SafaricomPLC | @safaricom_care | Facebook: Safaricom PLC | Terms and
+TDJ1FXGR7X
+2025-04-19 20:04:03 Merchant Payment to 7697553 - EDWIN
+LUSICHI
+COMPLETED
+0.00
+100.00
+966.05
+TDJ4FWYL4S
+2025-04-19 20:01:48 M-Shwari Deposit
+COMPLETED
+0.00
+400.00
+1,066.05
+TDJ5FWP7VP
+2025-04-19 20:00:38 M-Shwari Deposit
+COMPLETED
+0.00
+2,000.00
+1,466.05
+TDJ4FW44ZE
+2025-04-19 19:58:03 Merchant Payment Online to 5216938 -
+MAJID AL FUTTAIM HYPERMARKETS
+LTD
+COMPLETED
+0.00
+2,138.00
+3,466.05
+TDJ6FVUO4W
+2025-04-19 19:56:51 M-Shwari Withdraw
+COMPLETED
+1,000.00
+0.00
+5,604.05
+TDJ6FU26YY
+2025-04-19 19:49:08 Customer Transfer of Funds Charge
+COMPLETED
+0.00
+33.00
+4,604.05
+TDJ6FU26YY
+2025-04-19 19:49:08 Customer Transfer to 254759***133 -
+BRUCE OCHIEL KOLA
+COMPLETED
+0.00
+2,500.00
+4,637.05
+TDJ9FTPJ3N
+2025-04-19 19:47:37 M-Shwari Withdraw
+COMPLETED
+7,000.00
+0.00
+7,137.05
+TDJ1EG5XB7
+2025-04-19 15:42:05 Recharge for Customer to 4093441 -
+SAFARICOM DATA BUNDLES by
+0793***971 - Bruce  Ochiel kola
+COMPLETED
+0.00
+22.00
+137.05
+TDJ0EEHV4K
+2025-04-19 15:31:30 M-Shwari Deposit
+COMPLETED
+0.00
+1,000.00
+159.05
+TDJ3EEDU7Z
+2025-04-19 15:30:48 M-Shwari Deposit
+COMPLETED
+0.00
+4,000.00
+1,159.05
+TDJ1EBE3UJ
+2025-04-19 15:11:51 Customer Transfer to 254713***002 -
+PETER MAKUNDI NJERU
+COMPLETED
+0.00
+70.00
+5,159.05
+TDJ4E98MT2
+2025-04-19 14:57:41 Customer Transfer of Funds Charge
+COMPLETED
+0.00
+23.00
+5,229.05
+TDJ4E98MT2
+2025-04-19 14:57:41 Customer Transfer to 0708***224 - Mercy
+Wangari Mwangi
+COMPLETED
+0.00
+1,200.00
+5,252.05
+Page 1 of 10
+Disclaimer: This record is produced for your personal use and is not transferable. If this record is sought to be produced in court,
+please contact the nearest retail shop for further guidance or send an email to Safaricom Customer Care via
+Customercare@safaricom.co.ke
+Twitter: @SafaricomLtd | @safaricom_care| www.facebook.com/safaricomltd | For self-help dial *234# | Web: www.safaricom.co.ke | Terms and
 conditions apply
-Page 1 of 3
-L3HA6EXZ

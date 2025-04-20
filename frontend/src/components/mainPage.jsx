@@ -1,9 +1,6 @@
-import { Link } from "react-router-dom";
 import { ThemeContext } from "../context/ThemeContext";
-import { useContext } from "react";
 import { useState, useRef, useContext } from "react";
 import { Link ,useNavigate } from "react-router-dom";
-import { ThemeContext } from "../context/ThemeContext";
 import { FaSun, FaMoon } from "react-icons/fa";
 
 const MainPage = () => {

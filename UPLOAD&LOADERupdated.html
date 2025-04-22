@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>M-Pesa Statement Analyzer</title>
+    <style>
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(45deg, var(--mpesa-green), #80FFB2);
+            /* Add standard property after vendor prefix */
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+            letter-spacing: -1.5px;
+            text-shadow: 0 4px 20px rgba(0, 166, 81, 0.3);
+        }
+    
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(45deg, #FFF, #80FFB2);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+        }
+    
+        .fact-content {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            background: linear-gradient(45deg, #FFF, #E0FFEC);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>M-Pesa Statement Analyzer</h1>
+        <p>Upload your M-Pesa statement to analyze your spending patterns</p>
+        
+        <div class="upload-container" id="dropArea">
+            <div class="upload-icon">📊</div>
+            <h3>Drag & Drop Statement PDF</h3>
+            <input type="file" id="fileInput" class="file-input" accept=".pdf">
+            <button class="btn" id="browseBtn">Browse Files</button>
+        </div>
+        
+        <button class="btn" id="analyzeBtn" disabled>Analyze Statement</button>
+    </div>
+
+    <div class="loading-screen" id="loadingScreen">
+        <div class="progress-container">
+            <svg class="progress-ring" viewBox="0 0 100 100">
+                <circle class="background" cx="50" cy="50" r="45" stroke-width="6" stroke="rgba(255,255,255,0.1)"/>
+                <circle class="progress" cx="50" cy="50" r="45" stroke-width="6"/>
+            </svg>
+            <div class="progress-text" id="progressText">0%</div>
+        </div>
+        
+        <div class="fact-card">
+            <div class="fact-title">Did You Know? 💡</div>
+            <div class="fact-content" id="factContent"></div>
+        </div>
+    </div>
+
+    <script>
+        const facts = [
+            "Over 1.4 billion adults lack access to formal banking services",
+            "M-Pesa handles 90% of Kenya's GDP through mobile transactions",
+            "70% of people struggle to maintain consistent budgets",
+            "Digital payments are now used by half the global population",
+            "M-Pesa users save 30+ minutes daily on financial transactions",
+            "Financial literacy rates are below 35% globally",
+            "Personalized insights boost financial success by 40%",
+            "30 million+ Kenyans use M-Pesa daily for payments"
+        ];
+
+        // Progress System
+        const progressCircle = document.querySelector('.progress');
+        const radius = progressCircle.r.baseVal.value;
+        const circumference = radius * 2 * Math.PI;
+        progressCircle.style.strokeDasharray = `${circumference} ${circumference}`;
+        progressCircle.style.strokeDashoffset = circumference;
+
+        function setProgress(percent) {
+            const offset = circumference - (percent / 100) * circumference;
+            progressCircle.style.strokeDashoffset = offset;
+            document.getElementById('progressText').textContent = `${Math.round(percent)}%`;
+        }
+
+        // Fact System
+        function showRandomFact() {
+            const fact = facts[Math.floor(Math.random() * facts.length)];
+            document.getElementById('factContent').textContent = fact;
+        }
+
+        // File Handling
+        document.addEventListener('DOMContentLoaded', () => {
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            const fileInput = document.getElementById('fileInput');
+            
+            document.getElementById('browseBtn').addEventListener('click', () => fileInput.click());
+            
+            fileInput.addEventListener('change', handleFile);
+            
+            analyzeBtn.addEventListener('click', () => {
+                document.getElementById('loadingScreen').style.display = 'flex';
+                startAnalysis();
+            });
+
+            function handleFile(e) {
+                const file = e.target.files[0];
+                if(file) {
+                    analyzeBtn.disabled = false;
+                    analyzeBtn.style.opacity = '1';
+                }
+            }
+
+            function startAnalysis() {
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += Math.random() * 3;
+                    if(progress >= 100) {
+                        progress = 100;
+                        clearInterval(interval);
+                        setTimeout(() => {
+                            document.getElementById('loadingScreen').style.display = 'none';
+                            alert('Analysis complete!');
+                        }, 1000);
+                    }
+                    setProgress(progress);
+                    if(progress % 25 < 2) showRandomFact();
+                }, 150);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -5,11 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>M-Pesa Statement Analyzer</title>
     <style>
+        :root {
+            --mpesa-green: #00A651;
+            --mpesa-light: #E0FFEC;
+            --dark-bg: #121826;
+            --card-bg: #1E293B;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: var(--dark-bg);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 2rem;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+        
         h1 {
             font-size: 2.8rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
             background: linear-gradient(45deg, var(--mpesa-green), #80FFB2);
-            /* Add standard property after vendor prefix */
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -17,7 +49,95 @@
             letter-spacing: -1.5px;
             text-shadow: 0 4px 20px rgba(0, 166, 81, 0.3);
         }
-    
+        
+        p {
+            color: #94A3B8;
+            font-size: 1.1rem;
+            max-width: 600px;
+        }
+        
+        .upload-container {
+            background: var(--card-bg);
+            border: 2px dashed #334155;
+            border-radius: 1rem;
+            padding: 3rem 2rem;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .upload-container:hover {
+            border-color: var(--mpesa-green);
+            background: rgba(0, 166, 81, 0.05);
+        }
+        
+        .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .btn {
+            background: var(--mpesa-green);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            background: #008a45;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 166, 81, 0.3);
+        }
+        
+        .btn:disabled {
+            background: #334155;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+            opacity: 0.7;
+        }
+        
+        /* Loading Screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 3rem;
+            z-index: 1000;
+        }
+        
+        .progress-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+        }
+        
+        .progress-ring circle.progress {
+            stroke: var(--mpesa-green);
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.5s ease;
+        }
+        
         .progress-text {
             position: absolute;
             top: 50%;
@@ -31,27 +151,48 @@
             -webkit-text-fill-color: transparent;
             color: transparent;
         }
-    
+        
+        .fact-card {
+            background: var(--card-bg);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            max-width: 500px;
+            text-align: center;
+            border-left: 4px solid var(--mpesa-green);
+        }
+        
+        .fact-title {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--mpesa-light);
+        }
+        
         .fact-content {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             line-height: 1.6;
-            background: linear-gradient(45deg, #FFF, #E0FFEC);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            color: transparent;
-            font-weight: 500;
+            color: #E2E8F0;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>M-Pesa Statement Analyzer</h1>
-        <p>Upload your M-Pesa statement to analyze your spending patterns</p>
+        <p>Upload your M-Pesa statement to analyze your spending patterns and gain financial insights</p>
         
         <div class="upload-container" id="dropArea">
             <div class="upload-icon">📊</div>
             <h3>Drag & Drop Statement PDF</h3>
+            <p class="text-muted">or select file manually</p>
             <input type="file" id="fileInput" class="file-input" accept=".pdf">
             <button class="btn" id="browseBtn">Browse Files</button>
         </div>
@@ -61,9 +202,9 @@
 
     <div class="loading-screen" id="loadingScreen">
         <div class="progress-container">
-            <svg class="progress-ring" viewBox="0 0 100 100">
+            <svg class="progress-ring" width="200" height="200" viewBox="0 0 100 100">
                 <circle class="background" cx="50" cy="50" r="45" stroke-width="6" stroke="rgba(255,255,255,0.1)"/>
-                <circle class="progress" cx="50" cy="50" r="45" stroke-width="6"/>
+                <circle class="progress" cx="50" cy="50" r="45" stroke-width="6" fill="transparent"/>
             </svg>
             <div class="progress-text" id="progressText">0%</div>
         </div>
@@ -109,23 +250,68 @@
         document.addEventListener('DOMContentLoaded', () => {
             const analyzeBtn = document.getElementById('analyzeBtn');
             const fileInput = document.getElementById('fileInput');
+            const dropArea = document.getElementById('dropArea');
+            
+            // Initial fact
+            showRandomFact();
             
             document.getElementById('browseBtn').addEventListener('click', () => fileInput.click());
             
             fileInput.addEventListener('change', handleFile);
             
-            analyzeBtn.addEventListener('click', () => {
-                document.getElementById('loadingScreen').style.display = 'flex';
-                startAnalysis();
+            // Drag and drop handlers
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, preventDefaults, false);
             });
-
+            
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropArea.addEventListener(eventName, highlight, false);
+            });
+            
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, unhighlight, false);
+            });
+            
+            function highlight() {
+                dropArea.style.borderColor = '#00A651';
+                dropArea.style.background = 'rgba(0, 166, 81, 0.1)';
+            }
+            
+            function unhighlight() {
+                dropArea.style.borderColor = '#334155';
+                dropArea.style.background = 'var(--card-bg)';
+            }
+            
+            dropArea.addEventListener('drop', handleDrop, false);
+            
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                fileInput.files = files;
+                handleFile({ target: fileInput });
+            }
+            
             function handleFile(e) {
                 const file = e.target.files[0];
                 if(file) {
                     analyzeBtn.disabled = false;
-                    analyzeBtn.style.opacity = '1';
+                    dropArea.innerHTML = `
+                        <div class="upload-icon">✅</div>
+                        <h3>${file.name}</h3>
+                        <p class="text-muted">${(file.size / 1024).toFixed(1)} KB</p>
+                    `;
                 }
             }
+
+            analyzeBtn.addEventListener('click', () => {
+                document.getElementById('loadingScreen').style.display = 'flex';
+                startAnalysis();
+            });
 
             function startAnalysis() {
                 let progress = 0;
@@ -136,7 +322,7 @@
                         clearInterval(interval);
                         setTimeout(() => {
                             document.getElementById('loadingScreen').style.display = 'none';
-                            alert('Analysis complete!');
+                            alert('Analysis complete! Results would appear here in a real application.');
                         }, 1000);
                     }
                     setProgress(progress);

@@ -1,0 +1,140 @@
+/* Main container styles */
+.relative {
+  position: relative;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.h-screen {
+  height: 100vh;
+}
+
+.bg-gray-900 {
+  background-color: #111827;
+}
+
+/* Canvas styles */
+.absolute {
+  position: absolute;
+}
+
+.top-0 {
+  top: 0;
+}
+
+.left-0 {
+  left: 0;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.h-full {
+  height: 100%;
+}
+
+/* Controls container */
+.bottom-8 {
+  bottom: 2rem;
+}
+
+.flex {
+  display: flex;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.items-center {
+  align-items: center;
+}
+
+/* Play/Pause button */
+.bg-green-500 {
+  background-color: #00c853;
+}
+
+.text-white {
+  color: white;
+}
+
+.p-3 {
+  padding: 0.75rem;
+}
+
+.rounded-full {
+  border-radius: 9999px;
+}
+
+.shadow-lg {
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+.hover\:bg-green-600:hover {
+  background-color: #00b14a;
+}
+
+.transition-colors {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+/* Progress indicator container */
+.bottom-16 {
+  bottom: 4rem;
+}
+
+.space-x-2 > * + * {
+  margin-left: 0.5rem;
+}
+
+/* Scene indicator dots */
+.w-2 {
+  width: 0.5rem;
+}
+
+.h-2 {
+  height: 0.5rem;
+}
+
+.rounded-full {
+  border-radius: 9999px;
+}
+
+.bg-green-500 {
+  background-color: #00c853;
+}
+
+.bg-gray-600 {
+  background-color: #4b5563;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .bottom-8 {
+    bottom: 1rem;
+  }
+  
+  .bottom-16 {
+    bottom: 3rem;
+  }
+}
+
+/* Animation for the canvas (if you want to add any) */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+canvas {
+  animation: fadeIn 0.5s ease-out;
+}

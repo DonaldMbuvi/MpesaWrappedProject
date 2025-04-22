@@ -1,0 +1,154 @@
+MPESA FULL STATEMENT
+ 
+Customer Name:             Bruce kola
+Mobile Number:             254793271971
+Date of Statement:         20th 4 2025
+Statement Period:          20th 10 2024 - 20th 4 2025
+ 
+SUMMARY
+ 
+ 
+DETAILED STATEMENT
+ 
+TRANSACTION TYPE
+PAID IN
+PAID OUT
+Cash Out
+0.00
+179.00
+Send Money
+40,515.00
+26,271.00
+B2C Payment
+910.00
+0.00
+Pay Bill
+0.00
+2,961.00
+FSI Withdraw
+25,000.00
+0.00
+FSI Deposit
+0.00
+28,100.00
+KenyaRecharge
+0.00
+1,204.00
+Customer Merchant Payment
+0.00
+7,905.00
+Customer Airtime Purchase
+0.00
+3.00
+Customer Bundle Purchase
+0.00
+80.00
+TOTAL:
+66,425.00
+66,703.00
+Receipt No
+Completion Time
+Details
+Transaction Status
+Paid in
+Withdraw
+n
+Balance
+TDJ1FXGR7X
+2025-04-19 20:04:03 Merchant Payment to 7697553 - EDWIN
+LUSICHI
+COMPLETED
+0.00
+100.00
+966.05
+TDJ4FWYL4S
+2025-04-19 20:01:48 M-Shwari Deposit
+COMPLETED
+0.00
+400.00
+1,066.05
+TDJ5FWP7VP
+2025-04-19 20:00:38 M-Shwari Deposit
+COMPLETED
+0.00
+2,000.00
+1,466.05
+TDJ4FW44ZE
+2025-04-19 19:58:03 Merchant Payment Online to 5216938 -
+MAJID AL FUTTAIM HYPERMARKETS
+LTD
+COMPLETED
+0.00
+2,138.00
+3,466.05
+TDJ6FVUO4W
+2025-04-19 19:56:51 M-Shwari Withdraw
+COMPLETED
+1,000.00
+0.00
+5,604.05
+TDJ6FU26YY
+2025-04-19 19:49:08 Customer Transfer of Funds Charge
+COMPLETED
+0.00
+33.00
+4,604.05
+TDJ6FU26YY
+2025-04-19 19:49:08 Customer Transfer to 254759***133 -
+BRUCE OCHIEL KOLA
+COMPLETED
+0.00
+2,500.00
+4,637.05
+TDJ9FTPJ3N
+2025-04-19 19:47:37 M-Shwari Withdraw
+COMPLETED
+7,000.00
+0.00
+7,137.05
+TDJ1EG5XB7
+2025-04-19 15:42:05 Recharge for Customer to 4093441 -
+SAFARICOM DATA BUNDLES by
+0793***971 - Bruce  Ochiel kola
+COMPLETED
+0.00
+22.00
+137.05
+TDJ0EEHV4K
+2025-04-19 15:31:30 M-Shwari Deposit
+COMPLETED
+0.00
+1,000.00
+159.05
+TDJ3EEDU7Z
+2025-04-19 15:30:48 M-Shwari Deposit
+COMPLETED
+0.00
+4,000.00
+1,159.05
+TDJ1EBE3UJ
+2025-04-19 15:11:51 Customer Transfer to 254713***002 -
+PETER MAKUNDI NJERU
+COMPLETED
+0.00
+70.00
+5,159.05
+TDJ4E98MT2
+2025-04-19 14:57:41 Customer Transfer of Funds Charge
+COMPLETED
+0.00
+23.00
+5,229.05
+TDJ4E98MT2
+2025-04-19 14:57:41 Customer Transfer to 0708***224 - Mercy
+Wangari Mwangi
+COMPLETED
+0.00
+1,200.00
+5,252.05
+Page 1 of 10
+Disclaimer: This record is produced for your personal use and is not transferable. If this record is sought to be produced in court,
+please contact the nearest retail shop for further guidance or send an email to Safaricom Customer Care via
+Customercare@safaricom.co.ke
+Twitter: @SafaricomLtd | @safaricom_care| www.facebook.com/safaricomltd | For self-help dial *234# | Web: www.safaricom.co.ke | Terms and
+conditions apply

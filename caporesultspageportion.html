@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Wrapped</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1db954;
+            --primary-dark: #1aa34a;
+            --secondary: #191414;
+            --accent: #ffffff;
+            --text: #e0e0e0;
+            --highlight: #1ed760;
+            --progress: #535353;
+            --progress-active: #b3b3b3;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--secondary);
+            color: var(--accent);
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .background-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.7;
+            background: 
+                radial-gradient(circle at 20% 30%, var(--primary), transparent 70%),
+                radial-gradient(circle at 80% 70%, var(--highlight), transparent 70%);
+            background-size: 200% 200%;
+            animation: gradientMove 15s ease infinite;
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 0%; }
+            50% { background-position: 100% 100%; }
+            100% { background-position: 0% 0%; }
+        }
+
+        .carousel {
+            display: flex;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+        }
+
+        .slide {
+            min-width: 100vw;
+            height: 100vh;
+            scroll-snap-align: start;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease;
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .progress-container {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 500px;
+            display: flex;
+            gap: 8px;
+            z-index: 10;
+        }
+
+        .progress-bar {
+            height: 4px;
+            background-color: var(--progress);
+            flex: 1;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background-color: var(--progress-active);
+            transition: width 15s linear;
+        }
+
+        .progress-bar.active .progress-fill {
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, var(--primary), var(--highlight));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 20px rgba(30, 215, 96, 0.3);
+            font-weight: 900;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            font-weight: 700;
+        }
+
+        .highlight-card {
+            background: rgba(25, 20, 20, 0.7);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 15px 0;
+            width: 90%;
+            max-width: 500px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transform: scale(0.95);
+            transition: all 0.5s ease;
+        }
+
+        .highlight-card:hover {
+            transform: scale(1);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .highlight-card .value {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin: 10px 0;
+            color: var(--highlight);
+        }
+
+        .highlight-card .label {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+
+        .highlight-card .description {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            width: 90%;
+            max-width: 600px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: rgba(25, 20, 20, 0.6);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--highlight);
+            margin-bottom: 5px;
+        }
+
+        .stat-card .label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .btn-reanalyze {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary);
+            color: var(--secondary);
+            border: none;
+            padding: 18px 40px;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(29, 185, 84, 0.3);
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.5s ease;
+        }
+
+        .btn-reanalyze.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .btn-reanalyze:hover {
+            background: var(--highlight);
+            transform: translateX(-50%) scale(1.05);
+            box-shadow: 0 8px 25px rgba(30, 215, 96, 0.4);
+        }
+
+        .sparkle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: white;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0;
+            z-index: 5;
+        }
+
+        .final-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .final-screen h1 {
+            margin-bottom: 40px;
+        }
+
+        .final-screen p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            h2 {
+                font-size: 2rem;
+            }
+            
+            .highlight-card .value {
+                font-size: 2.5rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+        .nav-arrows {
+            position: fixed;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 50;
+            pointer-events: none;
+        }
+        
+        .arrow-btn {
+            pointer-events: all;
+            background: rgba(25, 20, 20, 0.5);
+            border: none;
+            color: var(--accent);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }
+        
+        .arrow-btn:hover {
+            background: var(--primary);
+            transform: scale(1.1);
+        }
+        
+        .commentary {
+            font-size: 1rem;
+            margin-top: 10px;
+            font-style: italic;
+            opacity: 0.8;
+            color: var(--highlight);
+        }
+        
+        .placeholder {
+            color: var(--progress-active);
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="background-animation"></div>
+    
+    <div class="progress-container" id="progress-container">
+        <!-- Progress bars will be added by JavaScript -->
+    </div>
+    
+    <div class="carousel" id="carousel">
+        <!-- Slide 1: Intro -->
+        <div class="slide active" id="slide-1">
+            <h1 class="floating">Your 2023 Financial Wrapped</h1>
+            <h2>Let's uncover your spending story</h2>
+        </div>
+        
+        <!-- Slide 2: Highest Transactions -->
+        <div class="slide" id="slide-2">
+            <h2>Your Highest Transactions</h2>
+            <div class="highlight-card">
+                <div class="label">Daily Highest</div>
+                <div class="value" id="daily-high">KES 0.00</div>
+                <div class="description" id="daily-desc">Loading...</div>
+            </div>
+            <div class="highlight-card">
+                <div class="label">Monthly Highest</div>
+                <div class="value" id="monthly-high">KES 0.00</div>
+                <div class="description" id="monthly-desc">Loading...</div>
+            </div>
+        </div>
+        
+        <!-- Slide 3: Top Transaction -->
+        <div class="slide" id="slide-3">
+            <h2>Your Top Transaction</h2>
+            <div class="highlight-card">
+                <div class="value" id="top-transaction-amount">KES 0.00</div>
+                <div class="label">Your Biggest Expense This Year</div>
+                <div class="description" id="top-transaction-desc">Loading...</div>
+            </div>
+        </div>
+        
+        <!-- Slide 4: Most Frequent -->
+        <div class="slide" id="slide-4">
+            <h2>Most Frequent</h2>
+            <div class="grid">
+                <div class="stat-card">
+                    <div class="value" id="top-recipient">-</div>
+                    <div class="label">Most Frequent Recipient</div>
+                    <div class="description" id="recipient-count">0 transactions</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value" id="busiest-day">-</div>
+                    <div class="label">Busiest Transaction Day</div>
+                    <div class="description" id="day-count">0 transactions</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Slide 5: Patterns -->
+        <div class="slide" id="slide-5">
+            <h2>Your Transaction Patterns</h2>
+            <div class="grid">
+                <div class="stat-card">
+                    <div class="value" id="busiest-month">-</div>
+                    <div class="label">Busiest Month</div>
+                    <div class="description" id="month-count">0 transactions</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value" id="peak-time">-</div>
+                    <div class="label">Peak Transaction Time</div>
+                    <div class="description" id="time-count">0 transactions</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Slide 6: Final -->
+        <div class="slide" id="slide-6">
+            <div class="final-screen">
+                <h1>Your 2023 Financial Story</h1>
+                <p>From big purchases to daily habits, you've created a unique financial fingerprint this year.</p>
+                <p>Ready to dive deeper into your spending patterns?</p>
+            </div>
+        </div>
+    </div>
+    <div class="nav-arrows">
+        <button class="arrow-btn" id="prev-btn">←</button>
+        <button class="arrow-btn" id="next-btn">→</button>
+    </div>
+    
+    <button class="btn-reanalyze" id="reanalyze-btn">Re-analyze Your Data</button>
+    
+    <script>
+        // Commentary generator based on spending
+        const generateCommentary = (amount, category) => {
+            const genericComments = [
+                "Bobby Axelrod would be proud! 💰",
+                "Someone's out here making moves! 🚀",
+                "Big spender alert! 🚨",
+                "Living that CEO lifestyle! 👔",
+                "Money moves only! 💸",
+                "You ate and left no crumbs! 👑",
+                "Main character energy! 🎬",
+                "The bag was secured! 👜",
+                "No cap, this is impressive! 🧢",
+                "You're the moment, darling! 💅"
+            ];
+            
+            const categoryComments = {
+                "Pay Bill": [
+                    "Keeping the lights on like a responsible adult! 💡",
+                    "Bills, bills, bills... but make it fashion! 💃",
+                    "Adulting level: Expert 📈"
+                ],
+                "Transfer": [
+                    "Sharing is caring! Or is it? 🤔",
+                    "Making it rain on your people! ☔",
+                    "Generous king/queen behavior! 👑"
+                ],
+                "Shopping": [
+                    "Retail therapy hits different! 🛍️",
+                    "Treat yourself era! 🎁",
+                    "The mall feared you this year! 😱"
+                ],
+                "Airtime Purchase": [
+                    "Keeping the conversations flowing! 💬",
+                    "Social butterfly energy! 🦋",
+                    "Who you texting so much? 👀"
+                ]
+            };
+            
+            const isHighSpend = amount > 50000;
+            
+            if (isHighSpend && category && categoryComments[category]) {
+                return categoryComments[category][Math.floor(Math.random() * categoryComments[category].length)];
+            }
+            return genericComments[Math.floor(Math.random() * genericComments.length)];
+        };
+
+        // Format currency
+        const formatCurrency = (amount) => {
+            return `KES ${amount?.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) || '0.00'}`;
+        };
+
+        // Process data from backend
+        const processData = (data) => {
+            if (!data || Object.keys(data).length === 0) {
+                document.querySelectorAll('.value').forEach(el => {
+                    el.textContent = "-";
+                    el.classList.add('placeholder');
+                });
+                document.querySelectorAll('.description').forEach(el => {
+                    el.textContent = "Submit to see results for this category";
+                    el.classList.add('placeholder');
+                });
+                return;
+            }
+
+            document.querySelectorAll('.placeholder').forEach(el => el.classList.remove('placeholder'));
+
+            // Helper function to find highest values
+            const findHighest = (reportData) => {
+                let highest = { amount: 0, date: "", count: 0 };
+                for (const [key, value] of Object.entries(reportData)) {
+                    if (value.total_spent > highest.amount) {
+                        highest = { amount: value.total_spent, date: key, count: value.count };
+                    }
+                }
+                return highest;
+            };
+
+            // Update transaction data
+            const updateTransactionUI = (data) => {
+                const dailyHighest = findHighest(data.daily || {});
+                const monthlyHighest = findHighest(data.monthly || {});
+
+                document.getElementById('daily-high').textContent = formatCurrency(dailyHighest.amount);
+                document.getElementById('daily-desc').textContent = `${dailyHighest.count} transactions on ${dailyHighest.date}`;
+                
+                document.getElementById('monthly-high').textContent = formatCurrency(monthlyHighest.amount);
+                document.getElementById('monthly-desc').textContent = `${monthlyHighest.count} transactions in ${monthlyHighest.date}`;
+
+                const topTransaction = data.comprehensive?.top_3_transactions?.[0];
+                if (topTransaction) {
+                    document.getElementById('top-transaction-amount').textContent = formatCurrency(topTransaction.amount_out);
+                    document.getElementById('top-transaction-desc').textContent = 
+                        `${topTransaction.category} to ${topTransaction.paid_to || 'N/A'} on ${topTransaction.transaction_date}`;
+                    
+                    const commentary = generateCommentary(topTransaction.amount_out, topTransaction.category);
+                    const commentaryEl = document.createElement('div');
+                    commentaryEl.className = 'commentary';
+                    commentaryEl.textContent = commentary;
+                    document.getElementById('top-transaction-desc').after(commentaryEl);
+                }
+            };
+
+            // Update frequency data
+            const updateFrequencyUI = (data) => {
+                if (data.comprehensive?.most_frequent_category) {
+                    document.getElementById('top-recipient').textContent = data.comprehensive.most_frequent_category[0];
+                    document.getElementById('recipient-count').textContent = `${data.comprehensive.most_frequent_category[1]} transactions`;
+                }
+
+                const busiestDay = data.comprehensive?.top_5_days?.[0];
+                const busiestMonth = data.comprehensive?.top_3_months?.[0];
+                
+                if (busiestDay) {
+                    document.getElementById('busiest-day').textContent = busiestDay[0];
+                    document.getElementById('day-count').textContent = `${busiestDay[1]} transactions`;
+                }
+                
+                if (busiestMonth) {
+                    document.getElementById('busiest-month').textContent = busiestMonth[0];
+                    document.getElementById('month-count').textContent = `${busiestMonth[1]} transactions`;
+                }
+            };
+
+            // Update time patterns
+            const updateTimePatterns = (transactions) => {
+                const findPeakTime = () => {
+                    const timeCounts = {};
+                    transactions?.forEach(txn => {
+                        const hour = txn.transaction_time?.split(':')[0] + ':00' || 'Unknown';
+                        timeCounts[hour] = (timeCounts[hour] || 0) + 1;
+                    });
+                    
+                    let peak = { time: "-", count: 0 };
+                    for (const [time, count] of Object.entries(timeCounts)) {
+                        if (count > peak.count) peak = { time, count };
+                    }
+                    return peak;
+                };
+
+                const peakTime = findPeakTime();
+                document.getElementById('peak-time').textContent = peakTime.time;
+                document.getElementById('time-count').textContent = `${peakTime.count} transactions`;
+            };
+
+            // Execute updates
+            updateTransactionUI(data);
+            updateFrequencyUI(data);
+            updateTimePatterns(data.comprehensive?.top_3_transactions || []);
+        };
+
+        // Carousel initialization
+        const initCarousel = () => {
+            const carousel = document.getElementById('carousel');
+            const slides = document.querySelectorAll('.slide');
+            const progressContainer = document.getElementById('progress-container');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const reanalyzeBtn = document.getElementById('reanalyze-btn');
+            
+            // Create progress bars
+            slides.forEach(() => {
+                const progressBar = document.createElement('div');
+                progressBar.className = 'progress-bar';
+                progressBar.innerHTML = '<div class="progress-fill"></div>';
+                progressContainer.appendChild(progressBar);
+            });
+            
+            const progressBars = document.querySelectorAll('.progress-bar');
+            let currentSlide = 0;
+            let autoAdvanceInterval;
+            
+            const activateSlide = (index) => {
+                slides.forEach((slide, i) => {
+                    slide.classList.toggle('active', i === index);
+                });
+                progressBars.forEach((bar, i) => {
+                    bar.classList.toggle('active', i === index);
+                });
+                
+                reanalyzeBtn.classList.toggle('visible', index === slides.length - 1);
+                if (index === slides.length - 1) clearInterval(autoAdvanceInterval);
+            };
+
+            const goToSlide = (index) => {
+                if (index < 0) index = slides.length - 1;
+                if (index >= slides.length) index = 0;
+                
+                currentSlide = index;
+                carousel.scrollTo({
+                    left: currentSlide * window.innerWidth,
+                    behavior: 'smooth'
+                });
+                activateSlide(currentSlide);
+            };
+
+            // Navigation controls
+            prevBtn.addEventListener('click', () => goToSlide(currentSlide - 1));
+            nextBtn.addEventListener('click', () => goToSlide(currentSlide + 1));
+            
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft') goToSlide(currentSlide - 1);
+                if (e.key === 'ArrowRight') goToSlide(currentSlide + 1);
+            });
+
+            // Auto-advance logic
+            const startAutoAdvance = () => {
+                autoAdvanceInterval = setInterval(() => {
+                    if (currentSlide < slides.length - 1) goToSlide(currentSlide + 1);
+                }, 15000);
+            };
+
+            // Reanalyze button handler
+            reanalyzeBtn.addEventListener('click', () => {
+                fetchData();
+                goToSlide(0);
+                startAutoAdvance();
+            });
+
+            // Initial setup
+            activateSlide(0);
+            startAutoAdvance();
+        };
+
+        // Fetch data from backend
+        const fetchData = async () => {
+            try {
+                const response = await fetch('http://localhost:5000/api/reports');
+                const data = await response.json();
+                processData(data);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                processData({}); // Show placeholder state
+            }
+        };
+
+        // Initialize on load
+        window.onload = () => {
+            fetchData();
+            initCarousel();
+        };
+    </script>
+</body>
+</html>

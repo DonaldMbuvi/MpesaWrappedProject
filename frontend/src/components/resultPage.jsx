@@ -21,7 +21,7 @@ const ResultPage = () => {
   const [animatedSlides, setAnimatedSlides] = useState({}); // Track which slides have been animated
   const [isPaused, setIsPaused] = useState(false); // New state for pause functionality
   const totalSlides = 12;
-  const slideDuration = 7000; // 7 seconds per slide
+  const slideDuration = 6000; // 7 seconds per slide
   const intervalRef = useRef(null);
   const images = [pic1, pic2, pic3, pic4, pic5, pic6, pic7, pic8, pic9, pic10, pic11, pic12]; // Array of images
   const { theme } = useContext(ThemeContext);
@@ -44,6 +44,11 @@ const ResultPage = () => {
   const [most_visited_type, setMost_visited_type] = useState(0)
   const [most_active_day, setMost_active_day] = useState({})
   const [most_active_amount, setMost_active_amount] = useState({})
+  const [inactive_days, setInactiveDays] = useState({})
+  const [total_inactive_days, setTotalInactiveDays] = useState(0)
+  const [peak_transaction_period, setPeak_transaction_period] = useState({})
+
+
   const getDaySuffix = (day) => {
     if (day > 3 && day < 21) return 'th'; // 11th, 12th, 13th...
     switch (day % 10) {
@@ -70,6 +75,34 @@ const ResultPage = () => {
     const startIndex = words.indexOf("Online") + 1;
     const endIndex = words.indexOf("Acc.");
     return words.slice(startIndex, endIndex).join(' ');
+  }
+  var counter = 0
+  function formatInactiveDates(dates) {
+    if (!dates || !dates.day_1) {
+      return "N/A"
+    } else if (Object.keys(dates).length === 1){
+      return formatDate(dates.day_1)
+    } else {
+      const same_month = []    
+      const day_1_month = dates.day_1.slice(5,7) 
+      same_month.push(dates.day_1)
+      for (const date of Object.values(dates)) {
+        if ((day_1_month === date.slice(5,7)) && (same_month.length < 2) && (date != dates.day_1)){ //if the month is same, pick 1st two 
+            same_month.push(date)
+        }
+      }
+      if (same_month.length === 1) {
+        const first_day = formatDate(same_month[0])
+        counter += 1
+        return `${first_day}`
+
+      } else {
+        const striped_first_day = formatDate(same_month[0]).slice(0,4) // strip month and year
+        const second_full_day = formatDate(same_month[1])
+        counter += 2
+        return `${striped_first_day} and ${second_full_day}`
+      }
+    }
   }
   useEffect(() => {
     const fetchData = async () => {
@@ -146,7 +179,17 @@ const ResultPage = () => {
 
     const most_active_amount = data.results_page?.time_based?.most_active_day.active_day_amount || "";
     setMost_active_amount(most_active_amount.toLocaleString())
-      } catch (err) {
+
+    //inactive day
+    const inactive_days = data.results_page?.time_based?.inactive_days || {}
+    setInactiveDays(inactive_days)
+
+    setTotalInactiveDays(data.user_analytics_page?.number_of_inactive_days || 0);
+
+    // peak transaction time
+    setPeak_transaction_period(data.results_page?.time_based?.peak_transaction_period)
+
+  } catch (err) {
         console.log("Error fetching data:", err);
       } finally {
         setIsLoading(false);
@@ -155,8 +198,9 @@ const ResultPage = () => {
 
     fetchData();
   }, []);
-  const inlineH5 = { display: 'inline', marginRight: 10 };
 
+  const inlineH5 = { display: 'inline', marginRight: 10 };
+  const text_inactive_days = formatInactiveDates(inactive_days)
 
   const captions = [
     //pic 1
@@ -166,6 +210,9 @@ const ResultPage = () => {
     {
       title: (
         <>
+         <u>Money Matters</u> 
+        <br></br>
+        <br></br>
           <h6 style={inlineH5}>You received:</h6>
           <span style={{WebkitTextStroke: "0.5px black" ,color:"rgb(71, 255, 25)"}}> Ksh {total_received}</span> <h6 style={inlineH5}></h6>&nbsp;
           <br></br>
@@ -173,7 +220,7 @@ const ResultPage = () => {
           <span style={{ WebkitTextStroke: "0.5px black", color:"rgb(71, 255, 25)"}}>Ksh {total_spent}</span> <h6 style={inlineH5}></h6>&nbsp;
           <br></br>
           <h6 style={inlineH5}> so your net flow is: </h6>
-          Ksh {net_flow}  <h5 style={inlineH5}></h5>&nbsp;
+          <h5 style={inlineH5}>Ksh {net_flow} </h5>&nbsp;
         </>
       ),
       className: "style-two" 
@@ -335,7 +382,26 @@ const ResultPage = () => {
     {
       title: (
         <>
-          <h6 style={inlineH5}>pic 10: inactive_days</h6> 
+          <h6 style={inlineH5}>
+            {Object.keys(inactive_days).filter(key => key !== "more_days_flag").length > 0
+            ? "However, you didn't use Mpesa on"
+            : <span style={{fontSize: "32px", color:"rgb(255, 255, 255)"}}>
+              Wow! you've been using Mpesa continously.
+            </span>
+            }
+          </h6> 
+          {Object.keys(inactive_days).filter(key => key !== "more_days_flag").length > 0 && (
+            <>
+              <span style={{WebkitTextStroke: "0.5px grey", fontSize: "29px", color:"rgb(71, 255, 25)"}}>
+                {text_inactive_days}&nbsp;
+              </span>
+              <h6 style={inlineH5}> and </h6> 
+              <span style={{WebkitTextStroke: "0.5px grey", fontSize: "29px", color:"rgb(71, 255, 25)"}}>
+                {total_inactive_days-counter},&nbsp;
+              </span>
+              <h6 style={inlineH5}> other days.</h6> 
+            </>
+          )}
         </>
       ),
       className: "style-nine"
@@ -344,7 +410,9 @@ const ResultPage = () => {
     {
       title: (
        <>
-          <h6 style={inlineH5}>pic 11: peak_transaction_period</h6> 
+          <span style={{...inlineH5, color: '#4cd762'}}>{peak_transaction_period.percentage}</span>
+          <h5 style={inlineH5}> of your transactions were made in the </h5> 
+          <span style={{...inlineH5, color: '#4cd762'}}>{peak_transaction_period.period_name}</span>
         </>
       ),
       className: "style-nine"
@@ -353,6 +421,7 @@ const ResultPage = () => {
     {
       title: (
         <>
+
           <h6 style={inlineH5}> pic 12: Downloadable Summary</h6> 
         </>
       ),

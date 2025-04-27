@@ -43,7 +43,7 @@ async def upload_csv_and_save_to_db(db: psycopg2.extensions.connection = Depends
     is_encrypted = PdfReader(pdf_file.file).is_encrypted
     if is_encrypted:
         await pdf_file.seek(0)
-        cleaned_csv_content = await convert_ussd_pdf_to_csv(pdf_file, "346776")
+        cleaned_csv_content = await convert_ussd_pdf_to_csv(pdf_file, pin)
     else:
         await pdf_file.seek(0)
         cleaned_csv_content = convert__mpesa_app_pdf_to_csv(pdf_file)

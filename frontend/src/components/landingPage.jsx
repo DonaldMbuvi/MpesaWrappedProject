@@ -43,34 +43,34 @@ const LandingPage = () => {
   ];
 
   // Animation duration in ms
-  const animationDuration = 5000;
+  //const animationDuration = 5000;
 
   // Start or stop animation
-  const toggleAnimation = () => {
-    if (animating) {
-      setAnimating(false);
-      cancelAnimationFrame(animationRef.current);
-    } else {
-      setAnimating(true);
-      const startTime = Date.now();
-      const animate = () => {
-        const elapsed = Date.now() - startTime;
-        const progress = Math.min(elapsed / animationDuration, 1);
-        setAnimationProgress(progress);
+  // const toggleAnimation = () => {
+  //   if (animating) {
+  //     setAnimating(false);
+  //     cancelAnimationFrame(animationRef.current);
+  //   } else {
+  //     setAnimating(true);
+  //     const startTime = Date.now();
+  //     const animate = () => {
+  //       const elapsed = Date.now() - startTime;
+  //       const progress = Math.min(elapsed / animationDuration, 1);
+  //       setAnimationProgress(progress);
         
-        if (progress < 1) {
-          animationRef.current = requestAnimationFrame(animate);
-        } else {
-          // Move to next card when animation completes
-          setCurrentCard((prev) => (prev === cards.length - 1 ? 0 : prev + 1));
-          setAnimationProgress(0);
-          setAnimating(false);
-        }
-      };
+  //       if (progress < 1) {
+  //         animationRef.current = requestAnimationFrame(animate);
+  //       } else {
+  //         // Move to next card when animation completes
+  //         setCurrentCard((prev) => (prev === cards.length - 1 ? 0 : prev + 1));
+  //         setAnimationProgress(0);
+  //         setAnimating(false);
+  //       }
+  //     };
       
-      animationRef.current = requestAnimationFrame(animate);
-    }
-  };
+  //     animationRef.current = requestAnimationFrame(animate);
+  //   }
+  // };
 
   // Clean up animation on unmount
   useEffect(() => {

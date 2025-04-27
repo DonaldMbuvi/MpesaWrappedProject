@@ -102,7 +102,7 @@ def generate_report(transactions):
             amount_out = float(txn.get('amount_out', 0))
             amount_in = float(txn.get('amount_in', 0))
             category = txn.get('category', '')
-            recipient = txn.get('paid_to', '').strip()
+            recipient = (txn.get('paid_to') or '').strip()
 
             # Essentials
             report["results_page"]["essentials"]["total_spent"] += amount_out

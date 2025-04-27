@@ -1,6 +1,4 @@
-import json
 import psycopg2
-import asyncio
 from report_generator import report_maker
 from database import get_db_connection
 import logging
@@ -9,10 +7,13 @@ from fastapi.responses import JSONResponse
 import csv
 from  models import CREATE_INDEX, CREATE_REPORT_TABLE, CREATE_STATEMENT_TABLE
 from database import get_db
-from pdf_to_csv import convert_pdf_to_csv
+from _mpesa_app_pdf_to_csv import convert__mpesa_app_pdf_to_csv
+from _ussd_pdf_to_csv import convert_ussd_pdf_to_csv
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Optional
 from fastapi.exceptions import RequestValidationError
+from pypdf import PdfReader
+from io import BytesIO
 
 # Initialize FastAPI app
 app = FastAPI()
@@ -37,9 +38,15 @@ def create_tables():
 
 # API endpoint to save a statement to the database
 @app.post("/upload-pdf/")
-def upload_csv_and_save_to_db(db: psycopg2.extensions.connection = Depends(get_db), pdf_file: UploadFile = File(...) ,user_id: str = Form(...),  pin: Optional[str] = Form(None)):
-    
-    cleaned_csv_content = convert_pdf_to_csv(pdf_file)
+async def upload_csv_and_save_to_db(db: psycopg2.extensions.connection = Depends(get_db), pdf_file: UploadFile = File(...) ,user_id: str = Form(...),  pin: Optional[str] = Form(None)):
+
+    is_encrypted = PdfReader(pdf_file.file).is_encrypted
+    if is_encrypted:
+        await pdf_file.seek(0)
+        cleaned_csv_content = await convert_ussd_pdf_to_csv(pdf_file, "346776")
+    else:
+        await pdf_file.seek(0)
+        cleaned_csv_content = convert__mpesa_app_pdf_to_csv(pdf_file)
     if not cleaned_csv_content :
         raise HTTPException(status_code=400, detail="Failed to convert PDF to CSV")
 
@@ -102,7 +109,7 @@ def upload_csv_and_save_to_db(db: psycopg2.extensions.connection = Depends(get_d
         cur.close()
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error processing CSV: {str(e)}")
-    report_response = asyncio.run(report_maker(db, user_id, user_name))   
+    report_response = await (report_maker(db, user_id, user_name))   
     print(report_response)
     return "message: Transactions uploaded and saved to the database successfully"
 

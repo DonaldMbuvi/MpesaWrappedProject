@@ -1,11 +1,69 @@
 import { Link } from "react-router-dom";
-import { useContext } from "react";
+import { useContext, useState, useEffect } from "react";
 import { ThemeContext } from "../context/ThemeContext";
 import { FaSun, FaMoon } from "react-icons/fa";
 
-const ResultPage = () => {
+const OldresultPage = () => {
     const { theme, toggleTheme } = useContext(ThemeContext);
+    const [isLoading, setIsLoading] = useState(true);
+    const [total_spent, setTotal_spent] = useState([])
+    const [total_received, setTotal_received] = useState([])
+    const [net_flow, setNet_flow] = useState([])
     
+      useEffect(() => {
+        const fetchData = async () => {
+          setIsLoading(true);
+          try {
+            const user_id = localStorage.getItem('user_id');
+            const params = new URLSearchParams();
+            params.append('user_id', user_id);
+            
+        const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+        const baseUrl = isLocal 
+            ? "http://127.0.0.1:8000" 
+            : "https://mpesawrappedproject-backend-prod.onrender.com";
+        const url = `${baseUrl}/report?${params.toString()}`;
+            const response = await fetch(url);
+            const data = await response.json();
+            
+        // Top spent  
+        const total_spent = data.results_page?.essentials?.total_spent || {};
+        setTotal_spent(total_spent);
+        //  total_received  
+        const total_received = data.results_page?.essentials?.total_received || {};
+        setTotal_received(total_received);
+        // net flow  
+        const net_flow = data.results_page?.essentials?.net_flow || {};
+        setNet_flow(net_flow);
+
+
+          } catch (err) {
+            console.log("Error fetching data:", err);
+          } finally {
+            setIsLoading(false);
+          }
+        };
+    
+        fetchData();
+      }, []);
+
+      // total spent
+      function Total_spent() {
+        console.log(total_spent)
+        return (total_spent)
+      }
+      // total spent
+      function Total_received() {
+        console.log(total_received)
+        return (total_received)
+      }
+      // total spent
+      function Net_Flow() {
+        console.log(net_flow)
+        return (net_flow)
+      }
+
+
     // Color palette definitions (consistent with landing page)
     const colors = {
         light: {
@@ -49,12 +107,6 @@ const ResultPage = () => {
     };
 
     const currentColors = colors[theme];
-
-    const financialSummary = {
-        highest: 20000,
-        highestday: "Friday",
-        recipient: "Nadeem",
-    };
 
     const styles = {
         wrapper: {
@@ -178,7 +230,16 @@ const ResultPage = () => {
             opacity: 0.6
         }
     };
-
+    if (isLoading) {
+        return (
+          <div className={`analytics-container ${theme === 'dark' ? 'dark-theme' : ''}`}>
+            <div className="loading-spinner">
+              <div className="spinner"></div>
+              <p>Hang on a little bit...</p>
+            </div>
+          </div>
+        );
+      }
     return (
         <div style={styles.wrapper}>
             <div style={styles.toggleContainer}>
@@ -193,20 +254,9 @@ const ResultPage = () => {
 
             <div style={styles.container}>
                 <h1 style={styles.title}>Results Page</h1>
-                
-                <div style={styles.card}>
-                    <h2 style={styles.cardTitle}>Summary</h2>
-                    <p style={styles.summaryText}>
-                        <strong>Highest Single Transaction: </strong>ksh {financialSummary.highest}
-                    </p>
-                    <p style={styles.summaryText}>
-                        <strong>Day with most transactions: </strong>{financialSummary.highestday}
-                    </p>
-                    <p style={styles.summaryText}>
-                        <strong>Most frequent recipient: </strong>{financialSummary.recipient}
-                    </p>
-                </div>
-
+                <Total_spent />
+                 <Total_received />
+                 < Net_Flow/>
                 <div style={styles.buttonContainer}>
                     <Link to="/main" style={{ textDecoration: "none", width: "100%" }}>
                         <button
@@ -269,4 +319,4 @@ const ResultPage = () => {
     );
 };
 
-export default ResultPage;
+export default OldresultPage;

@@ -1,0 +1,239 @@
+/* Global Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, #6DD5ED 0%, #2193B0 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  line-height: 1.6;
+}
+
+/* Title Style */
+h1 {
+  font-size: clamp(2.5rem, 8vw, 4rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #d4f7dc;
+  text-shadow: 2px 2px 5px rgba(0, 100, 0, 0.3);
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+/* Wrapper and container */
+.result-wrapper {
+  width: 100%;
+  max-width: 1200px;
+  padding: 1rem;
+}
+
+.result-container {
+  background: rgba(23, 42, 58, 0.95);
+  color: #c8e6c9;
+  padding: 2.5rem;
+  border-radius: 1.5rem;
+  box-shadow: 0 1rem 3rem rgba(0, 32, 45, 0.4);
+  text-align: center;
+  backdrop-filter: blur(10px);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  margin: 1rem;
+}
+
+.result-container:hover {
+  transform: translateY(-0.5rem);
+  box-shadow: 0 1.5rem 4rem rgba(0, 32, 45, 0.5);
+}
+
+/* Card Styling */
+.card {
+  background: linear-gradient(45deg, rgba(34, 51, 68, 0.9), rgba(40, 60, 80, 0.9));
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 0.5rem 1.5rem rgba(0, 20, 30, 0.3);
+  margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(118, 255, 3, 0.2);
+}
+
+.card h2 {
+  font-size: clamp(1.5rem, 5vw, 2.25rem);
+  color: #76ff03;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+.card p {
+  font-size: clamp(1rem, 3vw, 1.25rem);
+  color: #a5d6a7;
+  margin-bottom: 1.5rem;
+  line-height: 1.8;
+  opacity: 0.9;
+}
+
+/* Button Styling */
+.button-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+button {
+  padding: 0.8rem 2rem;
+  font-size: 1rem;
+  cursor: pointer;
+  border: none;
+  border-radius: 0.75rem;
+  transition: all 0.2s ease;
+  background-color: #4CAF50;
+  color: #1b5e20;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  flex: 0 0 auto;
+}
+
+button:hover {
+  background-color: #45a049;
+  transform: translateY(-2px);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.button-secondary {
+  background-color: #2e7d32;
+  color: #d4f7dc;
+}
+
+.button-secondary:hover {
+  background-color: #1b5e20;
+}
+
+/* Social Media Share Buttons */
+.social-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+
+.social-buttons a {
+  font-size: 1.25rem;
+  padding: 0.75rem;
+  border-radius: 50%;
+  color: #1b5e20;
+  transition: all 0.2s ease;
+  width: 3.0rem;
+  height: 3.0rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  background-color: rgba(200, 230, 201, 0.9);
+  backdrop-filter: blur(5px);
+}
+
+.social-buttons a:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.2);
+  background-color: rgba(165, 214, 167, 0.9);
+}
+
+.social-buttons a.twitter {
+  background-color: #2e7d32;
+  color: #d4f7dc;
+}
+
+.social-buttons a.whatsapp {
+  background-color: #43a047;
+  color: #d4f7dc;
+}
+
+/* Theme Toggle Button */
+.toggleButton {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  border: none;
+  border-radius: 0.75rem;
+  background: rgba(216, 243, 220, 0.9);
+  color: #2e7d32;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.toggleButton:hover {
+  background: rgba(200, 230, 201, 0.95);
+  transform: translateY(-2px);
+}
+
+/* Text Elements */
+.result-container strong {
+  color: #76ff03;
+  font-weight: 600;
+}
+
+.result-container a {
+  color: #76ff03;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.result-container a:hover {
+  color: #64dd17;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .result-container {
+    padding: 1.5rem;
+    margin: 0.5rem;
+    border-radius: 1rem;
+  }
+
+  .card {
+    padding: 1.5rem;
+  }
+
+  button {
+    width: 100%;
+    padding: 1rem;
+  }
+
+  .toggleButton {
+    top: 0.5rem;
+    right: 0.5rem;
+    padding: 0.5rem 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    padding: 1rem;
+  }
+
+  .result-container {
+    padding: 1rem;
+  }
+
+  .social-buttons a {
+    width: 3rem;
+    height: 3rem;
+    font-size: 1rem;
+  }
+}

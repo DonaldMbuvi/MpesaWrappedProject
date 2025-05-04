@@ -7,4 +7,5 @@ pymupdf
 python-dateutil
 PyPDF2
 camelot-py
-pypdf 
+pypdf
+ghostscript

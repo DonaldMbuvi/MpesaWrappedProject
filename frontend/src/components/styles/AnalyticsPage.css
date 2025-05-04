@@ -13,11 +13,22 @@
 	padding: 2rem;
 	box-sizing: border-box;
 	color: var(--text-color);
-	background-color: var(--background-color);
 	min-height: 100vh;
 	transition: background-color var(--animation-speed) ease;
   }
   
+	/* Theme colors - light mode */
+  .analytics-container.light {
+		background: linear-gradient(135deg, #F8FCF8 0%, #D8EDD8 100%);
+		color: #1A3E1A;
+}
+
+/* Theme colors - dark mode */
+.analytics-container.dark {
+  background: linear-gradient(135deg, #000000 0%, #0C1F0C 100%);
+  color: #E0F2E0;
+}
+
   /* Loading Spinner */
   .loading-spinner {
 	display: flex;
@@ -427,15 +438,62 @@
   }
   
   .nav-button.primary {
-	background-color: var(--primary-color);
-	color: white;
-	border: none;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 8px;
+		background-color: #2ecc71;
+		color: white;
+		font-weight: 600;
+		transition: all 0.3s ease;
   }
   
   .nav-button.primary:hover {
-	background-color: var(--primary-dark);
+		background-color: #27ae60;
+		transform: translateY(-2px);
+		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	  }
+		.nav-button.primary:active {
+			transform: translateY(0);
+		}
+		.nav-button.primary:disabled {
+			background-color: #95a5a6;
+			cursor: not-allowed;
+			transform: none;
+			box-shadow: none;
+		}
+		/* Spinner for the download button */
+.button-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin-right: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* PDF report specific styling */
+@media print {
+  .analytics-container {
+    background-color: white !important;
+    color: black !important;
   }
   
+  .nav-buttons, .theme-toggle, .dashboard-tabs {
+    display: none !important;
+  }
+  
+  .chart-container, .info-card {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}
   /* Responsive Adjustments */
   @media (max-width: 1024px) {
 	.analytics-grid {

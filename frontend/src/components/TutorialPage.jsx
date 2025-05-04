@@ -69,7 +69,7 @@ const TutorialPage = () => {
           {step < steps.length - 1 ? (
             <button style={styles.bttn} onClick={nextStep}>Next</button>
           ) : (
-            <Link to="/landing">
+            <Link to="/main">
               <button
                 style={styles.bttn}
                 onMouseEnter={(e) => {
@@ -80,11 +80,20 @@ const TutorialPage = () => {
                   e.target.style.backgroundColor = "#007bff";
                   e.target.style.transform = "scale(1)";
                 }}
-              >Back to Start</button>
+              >Let's Go!</button>
             </Link>
           )}
         </motion.div>
       </AnimatePresence>
+      <svg 
+        style={styles.decorativeTriangle} 
+        viewBox="0 0 100 100" 
+        preserveAspectRatio="none"
+      >
+        <polygon points="0,100 100,0 100,100"
+        fill= "#4169E1"
+        />
+      </svg>
     </div>
   );
 };
@@ -101,7 +110,7 @@ const styles = {
     padding: "20px",
     boxSizing: "border-box",
     overflow: "hidden",
-    background: "linear-gradient(135deg, #f3f4f6, #e2e8f0)",
+    background: "linear-gradient(135deg, #F8FCF8 0%, #D8EDD8 100%)",
   },
   toggleButton: {
     position: "absolute",
@@ -151,6 +160,15 @@ const styles = {
     marginTop: "15px",
     transition: "all 0.3s ease-in-out",
   },
+  decorativeTriangle: {
+    position: 'absolute',
+    bottom: '0',
+    right: "0",
+    width: "45%",
+    height: "45%",
+    zIndex: "1",
+    opacity:"0.6",
+  }
 };
 
 export default TutorialPage;

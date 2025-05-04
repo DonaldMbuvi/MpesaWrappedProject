@@ -1,7 +1,10 @@
+// First, install the required packages
+// npm install html2canvas jspdf
+
 import { Link } from "react-router-dom";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 import { ThemeContext } from "../context/ThemeContext";
-import { FaSun, FaMoon, FaExchangeAlt, FaChartLine, FaUserFriends, FaClock, FaRegCreditCard } from "react-icons/fa";
+import { FaSun, FaMoon, FaExchangeAlt, FaChartLine, FaUserFriends, FaClock, FaRegCreditCard, FaDownload } from "react-icons/fa";
 import { Bar, Line } from "react-chartjs-2";
 import { 
   BarElement, 
@@ -12,9 +15,11 @@ import {
   Title, 
   Tooltip, 
   PointElement, 
-  LineElement ,
+  LineElement,
   Filler
 } from "chart.js";
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 import "./styles/AnalyticsPage.css";
 
 ChartJS.register(
@@ -33,6 +38,7 @@ const AnalyticsPage = () => {
   const { theme, toggleTheme } = useContext(ThemeContext);
   const [showAmountIn, setShowAmountIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isDownloading, setIsDownloading] = useState(false);
   const [monthlyData, setMonthlyData] = useState({
     spent: {labels: [], values: [], rawData: {}},
     received: {labels: [], values: [], rawData: {}}
@@ -46,6 +52,8 @@ const AnalyticsPage = () => {
   const [inactiveDays, setInactiveDays] = useState(0);
   const [mshwariData, setMshwariData] = useState({});
   const [airtime_and_bundles, setAirtimeB] = useState(0);
+  // const [userName, setUserName] = useState('');
+  const reportRef = useRef(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -55,13 +63,16 @@ const AnalyticsPage = () => {
         const params = new URLSearchParams();
         params.append('user_id', user_id);
         
-	const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
-	const baseUrl = isLocal 
-	    ? "http://127.0.0.1:8000" 
-	    : "https://mpesawrappedproject-backend-prod.onrender.com";
-	const url = `${baseUrl}/report?${params.toString()}`;
+        const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+        const baseUrl = isLocal 
+            ? "http://127.0.0.1:8000" 
+            : "https://mpesawrappedproject-backend-prod.onrender.com";
+        const url = `${baseUrl}/report?${params.toString()}`;
         const response = await fetch(url);
         const data = await response.json();
+        
+        // Get user name if available
+        //setUserName(data.user_analytics_page?.user_name || 'User');
         
         // Monthly transactions (spent)
         const monthlySpent = data.user_analytics_page?.monthly_transactions || {};
@@ -126,6 +137,101 @@ const AnalyticsPage = () => {
 
     fetchData();
   }, []);
+
+  // Function to generate and download the PDF report
+  const downloadReport = async () => {
+    if (!reportRef.current) return;
+    
+    try {
+      setIsDownloading(true);
+      
+      // Configure PDF settings
+      const reportTitle = `M-Pesa Financial Report`;
+      const reportDate = new Date().toLocaleDateString();
+      const fileName = `mpesa-financial-report-${reportDate.replace(/\//g, '-')}.pdf`;
+      
+      // Create a new PDF document with A4 size
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+      
+      // Add report title and date
+      pdf.setFontSize(20);
+      pdf.setTextColor(46, 204, 113); // Match theme color
+      pdf.text(reportTitle, pdfWidth / 2, 15, { align: 'center' });
+      
+      pdf.setFontSize(12);
+      pdf.setTextColor(100, 100, 100);
+      pdf.text(`Generated on ${reportDate}`, pdfWidth / 2, 22, { align: 'center' });
+      
+      // Add separator line
+      pdf.setDrawColor(220, 220, 220);
+      pdf.line(20, 25, pdfWidth - 20, 25);
+      
+      // Convert HTML content to canvas
+      const canvas = await html2canvas(reportRef.current, {
+        scale: 2, // Higher scale for better quality
+        useCORS: true,
+        logging: false,
+        backgroundColor: theme === 'dark' ? '#1a1a1a' : '#ffffff'
+      });
+      
+      // Calculate dimensions to fit in PDF
+      const imgWidth = pdfWidth - 40; // Margins on both sides
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      
+      // Add content to PDF (possibly over multiple pages)
+      let heightLeft = imgHeight;
+      let position = 30; // Starting position after title
+      let pageHeight = pdfHeight - 40; // Account for margins
+      
+      // Add first page image section
+      pdf.addImage(
+        canvas, 
+        'PNG', 
+        20, // x position
+        position, // y position
+        imgWidth,
+        Math.min(pageHeight, imgHeight)
+      );
+      
+      heightLeft -= pageHeight;
+      
+      // Add additional pages if content overflows
+      while (heightLeft > 0) {
+        position = 20; // Reset position for new page
+        pdf.addPage();
+        
+        pdf.addImage(
+          canvas,
+          'PNG',
+          20, // x position
+          position - pageHeight * (imgHeight - heightLeft) / imgHeight, // Y position adjustment
+          imgWidth,
+          imgHeight
+        );
+        
+        heightLeft -= pageHeight;
+      }
+      
+      // Add footer with page numbers
+      const totalPages = pdf.internal.getNumberOfPages();
+      for (let i = 1; i <= totalPages; i++) {
+        pdf.setPage(i);
+        pdf.setFontSize(10);
+        pdf.setTextColor(150, 150, 150);
+        pdf.text(`Page ${i} of ${totalPages}`, pdfWidth / 2, pdfHeight - 10, { align: 'center' });
+      }
+      
+      // Save the PDF
+      pdf.save(fileName);
+    } catch (error) {
+      console.error("Error generating PDF report:", error);
+      alert("Failed to generate report. Please try again.");
+    } finally {
+      setIsDownloading(false);
+    }
+  };
 
   function orderMonthlyData(rawData) {
     const monthOrder = [
@@ -510,55 +616,69 @@ const AnalyticsPage = () => {
         </button>
       </div>
 
-      <div className="dashboard-tabs">
-        <button className="dashboard-tab active">Overview</button>
-      </div>
-    <div className="combo">
-      <div className="chart-container">
-        <div className="chart-header">
-          <h3 className="section-header">
-          <FaChartLine className="section-icon" />
-          Monthly Financial Activity
-          </h3>
-          <button 
-          onClick={() => setShowAmountIn(!showAmountIn)}
-          className="data-toggle"
-          aria-label={showAmountIn ? "Show spending data" : "Show income data"}
-          >
-          <FaExchangeAlt size={12} />
-          {showAmountIn ? 'Show Expenses' : 'Show Income'}
-          </button>
+
+
+      {/* Main content to be captured in PDF */}
+      <div ref={reportRef}>
+        <div className="combo">
+          <div className="chart-container">
+            <div className="chart-header">
+              <h3 className="section-header">
+                <FaChartLine className="section-icon" />
+                Monthly Financial Activity
+              </h3>
+              <button 
+                onClick={() => setShowAmountIn(!showAmountIn)}
+                className="data-toggle"
+                aria-label={showAmountIn ? "Show spending data" : "Show income data"}
+              >
+                <FaExchangeAlt size={12} />
+                {showAmountIn ? 'Show Expenses' : 'Show Income'}
+              </button>
+            </div>
+            <div className="bar-chart">
+              <Bar options={barChartOptions} data={barChartData} height={300} />
+            </div>
+          </div>
+          <div className="chart-wrapper">
+            <PeriodLineGraph />
+          </div>
         </div>
-          <div className="bar-chart">
-            <Bar options={barChartOptions} data={barChartData} height={300} />
-          </div>
-      </div>
-      <div className="chart-wrapper">
-          <PeriodLineGraph />
-          </div>
-    </div>
 
+        <div className="info-cards-container">
+          <FulizaCard data={fulizaData}/>
+          <TransactionCostCard cost={transactionCost} />
+          <InactiveDaysCard days={inactiveDays} />
+          <MshwariCard mshwari={mshwariData} />
+          <AirtimeBCard airtimeB={airtime_and_bundles} />
+        </div>
 
-      <div className="info-cards-container">
-        <FulizaCard data={fulizaData}/>
-        <TransactionCostCard cost={transactionCost} />
-        <InactiveDaysCard days={inactiveDays} />
-        <MshwariCard mshwari={mshwariData} />
-        <AirtimeBCard airtimeB={airtime_and_bundles} />
+        <div className="analytics-grid">
+          <FreqRecipients/>
+          <TopARecipients/>
+        </div>
       </div>
-
-      <div className="analytics-grid">
-        <FreqRecipients/>
-        <TopARecipients/>
-      </div>
-      
 
       <div className="nav-buttons">
         <Link to="/results" className="nav-button">
-          Back to Results
+          Back to wrapped
         </Link>
-        <button className="nav-button primary">
-          Download Report
+        <button 
+          className="nav-button primary"
+          onClick={downloadReport}
+          disabled={isDownloading}
+        >
+          {isDownloading ? (
+            <>
+              <div className="button-spinner"></div>
+              Generating PDF...
+            </>
+          ) : (
+            <>
+              <FaDownload style={{ marginRight: '8px' }} />
+              Download Report
+            </>
+          )}
         </button>
       </div>
     </div>

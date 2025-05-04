@@ -1,13 +1,11 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useContext, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaSun, FaMoon } from "react-icons/fa";
 import { ThemeContext } from "../context/ThemeContext";
-import { useContext } from "react";
-
 const MainPage = () => {
   const { theme, toggleTheme } = useContext(ThemeContext);
   const [selectedFile, setSelectedFile] = useState(null);
-  var [isDragging, setIsDragging] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -15,6 +13,7 @@ const MainPage = () => {
   const [pin, setPin] = useState("");
   const [showPin, setShowPin] = useState(false);
   const [currentFactIndex, setCurrentFactIndex] = useState(0);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
 
@@ -28,6 +27,18 @@ const MainPage = () => {
     "Financial literacy rates are below 35% globally",
     "30 million+ Kenyans use M-Pesa daily for payments"
   ];
+
+  // Window resize listener
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   // Generate user ID function from your code
   const generateUserId = (fileName, fileSize, pin = '') => {
@@ -211,224 +222,247 @@ const MainPage = () => {
     setStatusMessage(message);
   };
 
-  // Styles
-  const styles = {
-    wrapper: {
-      position: "relative",
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "center",
-      alignItems: "center",
-      minHeight: "100vh",
-      width: "100vw",
-      padding: "20px",
-      boxSizing: "border-box",
-      overflow: "hidden",
-      fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-      backgroundColor: "#f5f7fa",
-      color: "#333",
-    },
-    container: {
-      backgroundColor: "white",
-      borderRadius: "10px",
-      boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
-      width: "90%",
-      maxWidth: "600px",
-      padding: "30px",
-      textAlign: "center",
-      marginTop: "50px",
-    },
-    backButton: {
-      padding: "10px 20px",
-      fontSize: "16px",
-      cursor: "pointer",
-      backgroundColor: "#39b54a",
-      color: "white",
-      border: "none",
-      borderRadius: "5px",
-      transition: "all 0.3s ease-in-out",
-      position: "absolute",
-      top: "90px",
-      left: "20px",
-      zIndex: 10,
-    },
-    toggleButton: {
-      position: "absolute",
-      top: "20px",
-      right: "20px",
-      padding: "10px",
-      fontSize: "14px",
-      border: "none",
-      borderRadius: "5px",
-      background: "#444",
-      color: "#fff",
-      cursor: "pointer",
-      zIndex: 10,
-    },
-    uploadContainer: {
-      border: "2px dashed #ccc",
-      borderRadius: "8px",
-      padding: "40px 20px",
-      margin: "20px 0",
-      transition: "all 0.3s",
-      cursor: "pointer",
-      position: "relative",
-      backgroundColor: isDragging ? "#e8f5e9" : "white",
-      borderColor: isDragging ? "#00a651" : "#ccc",
-    },
-    uploadIcon: {
-      fontSize: "48px",
-      color: "#00a651",
-      marginBottom: "15px",
-    },
-    fileInput: {
-      display: "none",
-    },
-    browseButton: {
-      backgroundColor: "#00a651",
-      color: "white",
-      border: "none",
-      padding: "12px 24px",
-      borderRadius: "5px",
-      cursor: "pointer",
-      fontSize: "16px",
-      fontWeight: "500",
-      transition: "background-color 0.3s",
-      marginTop: "15px",
-    },
-    analyzeButton: {
-      backgroundColor: selectedFile ? "#00a651" : "#cccccc",
-      color: selectedFile ? "white" : "#666666",
-      border: "none",
-      padding: "12px 24px",
-      borderRadius: "5px",
-      fontSize: "16px",
-      fontWeight: "500",
-      transition: "background-color 0.3s",
-      marginTop: "15px",
-      cursor: selectedFile ? "pointer" : "not-allowed",
-    },
-    fileInfo: {
-      marginTop: "15px",
-      fontSize: "14px",
-      color: "#666",
-    },
-    pinContainer: {
-      width: "100%",
-      maxWidth: "400px",
-      textAlign: "left",
-      margin: "15px 0",
-    },
-    pinLabel: {
-      display: "block",
-      marginBottom: "0.5rem",
-      color: "#666",
-      fontSize: "0.9rem",
-    },
-    pinInputWrapper: {
-      position: "relative",
-      width: "100%",
-    },
-    pinInput: {
-      width: "100%",
-      padding: "0.8rem",
-      paddingRight: "3rem",
-      border: "1px solid #ddd",
-      borderRadius: "0.5rem",
-      fontSize: "1rem",
-    },
-    showPinButton: {
-      position: "absolute",
-      right: "0.5rem",
-      top: "50%",
-      transform: "translateY(-50%)",
-      background: "none",
-      border: "none",
-      cursor: "pointer",
-      fontSize: "1.2rem",
-    },
-    errorMessage: {
-      color: "#dc3545",
-      marginTop: "1rem",
-    },
-    supportedFormats: {
-      fontSize: "12px",
-      color: "#6c757d",
-      marginTop: "10px",
-    },
-    loadingScreen: {
-      position: "fixed",
-      top: 0,
-      left: 0,
-      width: "100%",
-      height: "100%",
-      backgroundColor: "rgba(255, 255, 255, 0.95)",
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "center",
-      alignItems: "center",
-      gap: "3rem",
-      zIndex: 1000,
-    },
-    progressContainer: {
-      position: "relative",
-      width: "200px",
-      height: "200px",
-    },
-    progressText: {
-      position: "absolute",
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-      fontSize: "28px",
-      fontWeight: "700",
-      color: "#00A651",
-    },
-    statusMessage: {
-      marginTop: "1rem",
-      fontWeight: "500",
-      color: "#333",
-    },
-    factCard: {
-      backgroundColor: "white",
-      borderRadius: "1rem",
-      padding: "1.5rem",
-      maxWidth: "500px",
-      textAlign: "center",
-      borderLeft: "4px solid #00A651",
-      boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
-    },
-    factTitle: {
-      fontWeight: "700",
-      marginBottom: "0.5rem",
-      color: "#00A651",
-    },
-    factContent: {
-      fontSize: "1.1rem",
-      lineHeight: "1.6",
-      color: "#333",
-    },
+  // Responsive styles based on window width
+  const getResponsiveStyles = () => {
+    const isMobile = windowWidth < 768;
+    const isTablet = windowWidth >= 768 && windowWidth < 1024;
+    
+    return {
+      wrapper: {
+        position: "relative",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "100vh",
+        width: "100%",
+        padding: isMobile ? "10px" : "20px",
+        boxSizing: "border-box",
+        overflow: "hidden",
+        fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+        backgroundColor: "#f5f7fa",
+        color: "#333",
+        background: "linear-gradient(135deg, #F8FCF8 0%, #D8EDD8 100%)",
+
+      },
+      container: {
+        backgroundColor: "white",
+        borderRadius: "10px",
+        boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
+        width: isMobile ? "95%" : isTablet ? "85%" : "90%",
+        maxWidth: "600px",
+        padding: isMobile ? "15px" : "30px",
+        textAlign: "center",
+        marginBottom: "0",
+      },
+      title: {
+        color: '#39b54a',
+        fontSize: isMobile ? "1.5rem" : "2rem",
+        margin: isMobile ? "0.5rem 0" : "1rem 0",
+      },
+      description: {
+        fontSize: isMobile ? "0.9rem" : "1rem",
+        marginBottom: isMobile ? "0.5rem" : "1rem",
+      },
+      backButton: {
+        padding: isMobile ? "8px 16px" : "10px 20px",
+        fontSize: isMobile ? "14px" : "16px",
+        cursor: "pointer",
+        backgroundColor: "#39b54a",
+        color: "white",
+        border: "none",
+        borderRadius: "5px",
+        transition: "all 0.3s ease-in-out",
+        marginTop: "20px",
+        zIndex: 10,
+      },
+      toggleButton: {
+        position: "absolute",
+        top: "20px",
+        right: "20px",
+        padding: "10px",
+        fontSize: "14px",
+        border: "none",
+        borderRadius: "5px",
+        background: "#444",
+        color: "#fff",
+        cursor: "pointer",
+        zIndex: 10,
+      },
+      uploadContainer: {
+        border: "2px dashed #ccc",
+        borderRadius: "8px",
+        padding: isMobile ? "20px 10px" : "40px 20px",
+        margin: "20px 0",
+        transition: "all 0.3s",
+        cursor: "pointer",
+        position: "relative",
+        backgroundColor: isDragging ? "#e8f5e9" : "white",
+        borderColor: isDragging ? "#00a651" : "#ccc",
+      },
+      uploadIcon: {
+        fontSize: isMobile ? "36px" : "48px",
+        color: "#00a651",
+        marginBottom: "15px",
+      },
+      fileInput: {
+        display: "none",
+      },
+      browseButton: {
+        backgroundColor: "#00a651",
+        color: "white",
+        border: "none",
+        padding: isMobile ? "10px 20px" : "12px 24px",
+        borderRadius: "5px",
+        cursor: "pointer",
+        fontSize: isMobile ? "14px" : "16px",
+        fontWeight: "500",
+        transition: "background-color 0.3s",
+        marginTop: "15px",
+      },
+      analyzeButton: {
+        backgroundColor: selectedFile ? "#00a651" : "#cccccc",
+        color: selectedFile ? "white" : "#666666",
+        border: "none",
+        padding: isMobile ? "10px 20px" : "12px 24px",
+        borderRadius: "5px",
+        fontSize: isMobile ? "14px" : "16px",
+        fontWeight: "500",
+        transition: "background-color 0.3s",
+        marginTop: "15px",
+        cursor: selectedFile ? "pointer" : "not-allowed",
+        width: isMobile ? "100%" : "auto",
+      },
+      fileInfo: {
+        marginTop: "15px",
+        fontSize: isMobile ? "12px" : "14px",
+        color: "#666",
+      },
+      pinContainer: {
+        width: "100%",
+        maxWidth: isMobile ? "100%" : "400px",
+        textAlign: "left",
+        margin: isMobile ? "10px 0" : "15px 0",
+      },
+      pinLabel: {
+        display: "block",
+        marginBottom: "0.5rem",
+        color: "#666",
+        fontSize: isMobile ? "0.8rem" : "0.9rem",
+      },
+      pinInputWrapper: {
+        position: "relative",
+        width: "100%",
+      },
+      pinInput: {
+        width: "100%",
+        padding: isMobile ? "0.6rem" : "0.8rem",
+        paddingRight: "3rem",
+        border: "1px solid #ddd",
+        borderRadius: "0.5rem",
+        fontSize: isMobile ? "0.9rem" : "1rem",
+        boxSizing: "border-box",
+      },
+      showPinButton: {
+        position: "absolute",
+        right: "0.5rem",
+        top: "50%",
+        transform: "translateY(-50%)",
+        background: "none",
+        border: "none",
+        cursor: "pointer",
+        fontSize: isMobile ? "1rem" : "1.2rem",
+      },
+      errorMessage: {
+        color: "#dc3545",
+        marginTop: "1rem",
+        fontSize: isMobile ? "0.8rem" : "0.9rem",
+      },
+      supportedFormats: {
+        fontSize: isMobile ? "10px" : "12px",
+        color: "#6c757d",
+        marginTop: "10px",
+      },
+      loadingScreen: {
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        backgroundColor: "rgba(255, 255, 255, 0.95)",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        gap: isMobile ? "2rem" : "3rem",
+        zIndex: 1000,
+        padding: isMobile ? "15px" : "20px",
+        boxSizing: "border-box",
+      },
+      progressContainer: {
+        position: "relative",
+        width: isMobile ? "150px" : "200px",
+        height: isMobile ? "150px" : "200px",
+      },
+      progressText: {
+        position: "absolute",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        fontSize: isMobile ? "22px" : "28px",
+        fontWeight: "700",
+        color: "#00A651",
+      },
+      statusMessage: {
+        marginTop: "1rem",
+        fontWeight: "500",
+        color: "#333",
+        fontSize: isMobile ? "0.9rem" : "1rem",
+        textAlign: "center",
+      },
+      factCard: {
+        backgroundColor: "rgb(207, 255, 230)",
+        borderRadius: "1rem",
+        padding: isMobile ? "1rem" : "1.5rem",
+        maxWidth: isMobile ? "90%" : "500px",
+        textAlign: "center",
+        borderLeft: "4px solid #00A651",
+        boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+      },
+      factTitle: {
+        fontWeight: "700",
+        marginBottom: "0.5rem",
+        color: "#00A651",
+        fontSize: isMobile ? "0.9rem" : "1rem",
+      },
+      factContent: {
+        fontSize: isMobile ? "0.9rem" : "1.1rem",
+        lineHeight: "1.6",
+        color: "#333",
+      },
+      fileName: {
+        fontSize: isMobile ? "1rem" : "1.2rem",
+        wordBreak: "break-word",
+      },
+      fileSize: {
+        fontSize: isMobile ? "0.8rem" : "0.9rem",
+      },
+      decorativeTriangle: {
+        position: 'absolute',
+        bottom: '0',
+        right: "0",
+        width: "45%",
+        height: "45%",
+        zIndex: "1",
+        opacity:"0.6",
+      }
+    };
   };
+
+  const styles = getResponsiveStyles();
 
   return (
     <div style={styles.wrapper}>
-      {/* Back button */}
-      <Link to="/landing">
-        <button
-          style={styles.backButton}
-          onMouseEnter={(e) => {
-            e.target.style.backgroundColor = "#39b54c";
-            e.target.style.transform = "scale(1.05)";
-          }}
-          onMouseLeave={(e) => {
-            e.target.style.backgroundColor = "#39b54a";
-            e.target.style.transform = "scale(1)";
-          }}
-        >
-          Back to Intro Page
-        </button>
-      </Link>
-
       {/* Theme toggle button */}
       <button 
         style={styles.toggleButton} 
@@ -439,8 +473,10 @@ const MainPage = () => {
       </button>
 
       <div style={styles.container}>
-        <h1 style={{ color: '#39b54a' }}>M-Pesa Statement Analyzer</h1>
-        <p>Upload your M-Pesa statement to analyze your spending patterns and gain financial insights</p>
+        <h1 style={styles.title}>M-Pesa Statement Analyzer</h1>
+        <p style={styles.description}>
+          Upload your M-Pesa statement to analyze your spending patterns and gain financial insights
+        </p>
         
         <div 
           style={styles.uploadContainer}
@@ -452,14 +488,14 @@ const MainPage = () => {
           {selectedFile ? (
             <>
               <div style={styles.uploadIcon}>✅</div>
-              <h3>{selectedFile.name}</h3>
-              <p className="text-muted">{formatFileSize(selectedFile.size)}</p>
+              <h3 style={styles.fileName}>{selectedFile.name}</h3>
+              <p style={styles.fileSize}>{formatFileSize(selectedFile.size)}</p>
             </>
           ) : (
             <>
               <div style={styles.uploadIcon}>📊</div>
               <h3>Drag & Drop Statement PDF</h3>
-              <p className="text-muted">or select file manually</p>
+              <p style={styles.supportedFormats}>or select file manually</p>
             </>
           )}
           <input 
@@ -478,7 +514,7 @@ const MainPage = () => {
         {selectedFile && (
           <div style={styles.pinContainer}>
             <label style={styles.pinLabel}>
-              Enter your M-Pesa PIN (optional - only needed for encrypted statements):
+              Enter <b>Statement CODE</b> (sent by SAFARICOM via sms):
             </label>
             <div style={styles.pinInputWrapper}>
               <input
@@ -500,11 +536,11 @@ const MainPage = () => {
             </div>
           </div>
         )}
-        
+
         {errorMessage && (
           <div style={styles.errorMessage}>{errorMessage}</div>
         )}
-        
+
         <button 
           style={styles.analyzeButton}
           disabled={!selectedFile}
@@ -513,13 +549,28 @@ const MainPage = () => {
           Analyze Statement
         </button>
       </div>
-
+      {/* Back button */}
+      <Link to="/landing">
+        <button
+          style={styles.backButton}
+          onMouseEnter={(e) => {
+            e.target.style.backgroundColor = "#39b54c";
+            e.target.style.transform = "scale(1.05)";
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.backgroundColor = "#39b54a";
+            e.target.style.transform = "scale(1)";
+          }}
+        >
+          Back
+        </button>
+      </Link>
       {isLoading && (
         <div style={styles.loadingScreen}>
-          <h2 style={{ color: '#39b54a' }}>Analyzing your M-Pesa statement...</h2>
+          <h2 style={styles.title}>Analyzing your M-Pesa statement...</h2>
           
           <div style={styles.progressContainer}>
-            <svg width="200" height="200" viewBox="0 0 100 100">
+            <svg width="100%" height="100%" viewBox="0 0 100 100">
               <circle cx="50" cy="50" r="45" stroke="#e0e0e0" strokeWidth="6" fill="transparent"/>
               <circle 
                 cx="50" 
@@ -544,6 +595,15 @@ const MainPage = () => {
           </div>
         </div>
       )}
+      <svg 
+        style={styles.decorativeTriangle} 
+        viewBox="0 0 100 100" 
+        preserveAspectRatio="none"
+      >
+        <polygon points="0,100 100,0 100,100"
+        fill= "#4169E1"
+        />
+      </svg>
     </div>
   );
 };

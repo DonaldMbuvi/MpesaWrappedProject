@@ -12,7 +12,6 @@ from _ussd_pdf_to_csv import convert_ussd_pdf_to_csv
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Optional
 from pypdf import PdfReader
-from io import BytesIO
 
 # Initialize FastAPI app
 app = FastAPI()

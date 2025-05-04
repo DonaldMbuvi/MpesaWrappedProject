@@ -6,5 +6,5 @@ pandas
 pymupdf
 python-dateutil
 PyPDF2
-camelot
+camelot-py
 pypdf 

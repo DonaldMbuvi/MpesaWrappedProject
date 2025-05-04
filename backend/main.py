@@ -20,6 +20,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins = ["*" ],
     allow_methods=["GET", "POST"],
+    allow_headers=["*"],
 )
 # Create database table upon start up if they don't exist
 @app.on_event("startup")

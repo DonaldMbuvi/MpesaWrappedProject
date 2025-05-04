@@ -17,7 +17,7 @@ def get_db_connection():
     db_url = os.environ.get("DATABASE_URL")
     
     if db_url:
-        # Use DATABASE_URL for Render or production
+        # Use DATABASE_URL for Render on production
         return psycopg2.connect(db_url, cursor_factory=RealDictCursor)
     else:
         # Fallback to local dev config

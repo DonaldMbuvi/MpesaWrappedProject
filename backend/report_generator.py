@@ -3,7 +3,6 @@ import json
 from collections import defaultdict
 from datetime import datetime, timedelta, date, time
 
-import os
 
 def load_transactions(file_path):
     """Load transactions from JSON file"""
@@ -342,7 +341,6 @@ async def save_report_to_db(db, user_id, user_name, report_data):
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=500, detail=f"Error saving report to database: {str(e)}")
-        return False
 async  def report_maker(db, user_id, user_name):
     try:
         cur = db.cursor()
@@ -367,9 +365,10 @@ async  def report_maker(db, user_id, user_name):
                 if isinstance(value, (date, time)):
                     row[key] = value.isoformat()
 
-        # Save to JSON
-        # with open("user.json", "w") as f:
+        # Save transactions to JSON
+        # with open("transactions.json", "w") as f:
         #     json.dump(rows, f, indent=4)
+
         # Convert rows to list of dicts and convert date objects to strings
         transactions = []
         for row in rows:
@@ -390,16 +389,14 @@ async  def report_maker(db, user_id, user_name):
         # Generate report
         report = generate_report(transactions)
         
-        # Save to file
-        # with open("draft2_report.json", "w") as f:
+        # Save report to file
+        # with open("report.json", "w") as f:
         #     json.dump(report, f, indent=2)
         
         # Save to database
         report_id = await save_report_to_db(db, user_id, user_name, report)
         if not report_id:
-            raise Exception("Failed to save report to database")
-
-                
+            raise Exception("Failed to save report to database")         
 
         return "Report generated and saved to report_table successfully"
     except Exception as e:

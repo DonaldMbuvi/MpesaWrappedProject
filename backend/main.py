@@ -2,7 +2,7 @@ import psycopg2
 from report_generator import report_maker
 from database import get_db_connection
 import logging
-from fastapi import FastAPI, HTTPException, UploadFile, File, Depends, Request, status,Query, Form
+from fastapi import FastAPI, HTTPException, UploadFile, File, Depends,Query, Form
 from fastapi.responses import JSONResponse
 import csv
 from  models import CREATE_INDEX, CREATE_REPORT_TABLE, CREATE_STATEMENT_TABLE
@@ -11,7 +11,6 @@ from _mpesa_app_pdf_to_csv import convert__mpesa_app_pdf_to_csv
 from _ussd_pdf_to_csv import convert_ussd_pdf_to_csv
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Optional
-from fastapi.exceptions import RequestValidationError
 from pypdf import PdfReader
 from io import BytesIO
 
@@ -48,7 +47,7 @@ async def upload_csv_and_save_to_db(db: psycopg2.extensions.connection = Depends
         await pdf_file.seek(0)
         cleaned_csv_content = convert__mpesa_app_pdf_to_csv(pdf_file)
     if not cleaned_csv_content :
-        raise HTTPException(status_code=400, detail="Failed to convert PDF to CSV")
+        raise HTTPException(status_code=400, detail="Please provide a valid M-pesa Statement pdf")
 
     try:
         # Split the CSV content into lines
@@ -57,9 +56,8 @@ async def upload_csv_and_save_to_db(db: psycopg2.extensions.connection = Depends
         csv_reader = csv.reader(csv_data)
         next(csv_reader)  # Skip the header row
         cur = db.cursor()
-        #store csv data in mysql
+
         # For each row in the CSV, insert into the database
-        
         checker = 0
         for row in csv_reader:
             try:
@@ -73,7 +71,7 @@ async def upload_csv_and_save_to_db(db: psycopg2.extensions.connection = Depends
                 amount_in = int(float(row[4].replace(',', ''))) if row[4] and row[4] != '0' else 0
                 amount_out = int(float(row[5].replace(',', ''))) if row[5] and row[5] != '0' else 0
                 
-                user_name = row[6]  # 'Julius Cherotich'
+                user_name = row[6]  
 
                 
                 if checker == 0:
@@ -144,9 +142,3 @@ async def get_report(user_id: str = Query(...), db = Depends(get_db_connection))
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
     
-@app.exception_handler(RequestValidationError)
-async def validation_exception_handler(request: Request, exc: RequestValidationError):
-	exc_str = f'{exc}'.replace('\n', ' ').replace('   ', ' ')
-	logging.error(f"{request}: {exc_str}")
-	content = {'status_code': 10422, 'message': exc_str, 'data': None}
-	return JSONResponse(content=content, status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)

@@ -7,7 +7,7 @@ from typing import Generator
 LOCAL_DB_CONFIG = {
     "dbname": "wrapped_db",
     "user": "postgres",
-    "password": "safcoM",
+    "password": "postgres",
     "host": "localhost",
     "port": "5432",
     "cursor_factory": RealDictCursor

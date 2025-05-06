@@ -16,6 +16,8 @@ const MainPage = () => {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
+  const isMobile = windowWidth < 768;
+  const isTablet = windowWidth >= 768 && windowWidth < 1024;
 
   // Facts data
   const facts = [
@@ -28,6 +30,47 @@ const MainPage = () => {
     "30 million+ Kenyans use M-Pesa daily for payments"
   ];
 
+    // Theme-based colors
+    const themeColors = {
+      light: {
+        backgroundGradient: "linear-gradient(135deg, #F8FCF8 0%, #D8EDD8 100%)",
+        primaryText: "#1A3E1A",
+        secondaryText: "#2D5B2D",
+        accent: "#39b54a",
+        accentHover: "#2e9e3f",
+        buttonText: "white",
+        cardBg: "#FFFFFF",
+        cardShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+        error: "#dc3545",
+        disabled: "#cccccc",
+        dragActive: "#e8f5e9",
+        decorativeColor: "#4169E1",
+        loadingBg: "rgba(255, 255, 255, 0.95)",
+        factCardBg: "rgb(207, 255, 230)",
+        progressCircle: "#00A651",
+        progressBg: "#e0e0e0"
+      },
+      dark: {
+        backgroundGradient: "linear-gradient(135deg, #0a1f0a 0%, #152415 100%)",
+        primaryText: "#E0F2E0",
+        secondaryText: "#B8D8B8",
+        accent: "#3cb54a",
+        accentHover: "#32a042",
+        buttonText: "white",
+        cardBg: "#1a2e1a",
+        cardShadow: "0 4px 12px rgba(0, 0, 0, 0.3)",
+        error: "#e57373",
+        disabled: "#555555",
+        dragActive: "#2d5b2d",
+        decorativeColor: "#3a5bc7",
+        loadingBg: "rgba(0, 0, 0, 0.9)",
+        factCardBg: "rgb(30, 70, 50)",
+        progressCircle: "#3cb54a",
+        progressBg: "#333333"
+      }
+    };
+  
+    const currentTheme = themeColors[theme];
   // Window resize listener
   useEffect(() => {
     const handleResize = () => {
@@ -222,12 +265,9 @@ const MainPage = () => {
     setStatusMessage(message);
   };
 
-  // Responsive styles based on window width
+  // Responsive styles
   const getResponsiveStyles = () => {
 
-    const isMobile = windowWidth < 768;
-    const isTablet = windowWidth >= 768 && windowWidth < 1024;
-    
     return {
       wrapper: {
         position: "relative",
@@ -241,41 +281,44 @@ const MainPage = () => {
         boxSizing: "border-box",
         overflow: "hidden",
         fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-        backgroundColor: "#f5f7fa",
-        color: "#333",
-        background: "linear-gradient(135deg, #F8FCF8 0%, #D8EDD8 100%)",
-
+        background: currentTheme.backgroundGradient,
+        color: currentTheme.primaryText,
+        transition: "all 0.3s ease-in-out",
       },
       container: {
-        backgroundColor: "white",
+        backgroundColor: currentTheme.cardBg,
         borderRadius: "10px",
-        boxShadow: "0 4px 20px rgba(0, 0, 0, 0.1)",
+        boxShadow: currentTheme.cardShadow,
         width: isMobile ? "95%" : isTablet ? "85%" : "90%",
         maxWidth: "600px",
         padding: isMobile ? "15px" : "30px",
         textAlign: "center",
         marginBottom: "0",
+        transition: "all 0.3s ease-in-out",
       },
       title: {
-        color: '#39b54a',
+        color: currentTheme.accent,
         fontSize: isMobile ? "1.5rem" : "2rem",
         margin: isMobile ? "0.5rem 0" : "1rem 0",
       },
       description: {
         fontSize: isMobile ? "0.9rem" : "1rem",
         marginBottom: isMobile ? "0.5rem" : "1rem",
+        color: currentTheme.secondaryText,
       },
       backButton: {
         padding: isMobile ? "8px 16px" : "10px 20px",
         fontSize: isMobile ? "14px" : "16px",
         cursor: "pointer",
-        backgroundColor: "#39b54a",
-        color: "white",
+        backgroundColor: currentTheme.accent,
+        color: currentTheme.buttonText,
         border: "none",
         borderRadius: "5px",
         transition: "all 0.3s ease-in-out",
-        marginTop: "20px",
         zIndex: 10,
+        display: "flex",
+        alignItems: "center",
+        gap: "8px",
       },
       toggleButton: {
         position: "absolute",
@@ -284,52 +327,54 @@ const MainPage = () => {
         padding: "10px",
         fontSize: "14px",
         border: "none",
-        borderRadius: "5px",
-        background: "#444",
-        color: "#fff",
+        borderRadius: "50%",
+        background: currentTheme.accent,
+        color: currentTheme.buttonText,
         cursor: "pointer",
         zIndex: 10,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
       },
       uploadContainer: {
-        border: "2px dashed #ccc",
+        border: `2px dashed ${isDragging ? currentTheme.accent : "#ccc"}`,
         borderRadius: "8px",
         padding: isMobile ? "20px 10px" : "40px 20px",
         margin: "20px 0",
         transition: "all 0.3s",
         cursor: "pointer",
         position: "relative",
-        backgroundColor: isDragging ? "#e8f5e9" : "white",
-        borderColor: isDragging ? "#00a651" : "#ccc",
+        backgroundColor: isDragging ? currentTheme.dragActive : currentTheme.cardBg,
       },
       uploadIcon: {
         fontSize: isMobile ? "36px" : "48px",
-        color: "#00a651",
+        color: currentTheme.accent,
         marginBottom: "15px",
       },
       fileInput: {
         display: "none",
       },
       browseButton: {
-        backgroundColor: "#00a651",
-        color: "white",
+        backgroundColor: currentTheme.accent,
+        color: currentTheme.buttonText,
         border: "none",
         padding: isMobile ? "10px 20px" : "12px 24px",
         borderRadius: "5px",
         cursor: "pointer",
         fontSize: isMobile ? "14px" : "16px",
         fontWeight: "500",
-        transition: "background-color 0.3s",
+        transition: "all 0.3s",
         marginTop: "15px",
       },
       analyzeButton: {
-        backgroundColor: selectedFile ? "#00a651" : "#cccccc",
-        color: selectedFile ? "white" : "#666666",
+        backgroundColor: selectedFile ? currentTheme.accent : currentTheme.disabled,
+        color: currentTheme.buttonText,
         border: "none",
         padding: isMobile ? "10px 20px" : "12px 24px",
         borderRadius: "5px",
         fontSize: isMobile ? "14px" : "16px",
         fontWeight: "500",
-        transition: "background-color 0.3s",
+        transition: "all 0.3s",
         marginTop: "15px",
         cursor: selectedFile ? "pointer" : "not-allowed",
         width: isMobile ? "100%" : "auto",
@@ -337,7 +382,7 @@ const MainPage = () => {
       fileInfo: {
         marginTop: "15px",
         fontSize: isMobile ? "12px" : "14px",
-        color: "#666",
+        color: currentTheme.secondaryText,
       },
       pinContainer: {
         width: "100%",
@@ -348,7 +393,7 @@ const MainPage = () => {
       pinLabel: {
         display: "block",
         marginBottom: "0.5rem",
-        color: "#666",
+        color: currentTheme.secondaryText,
         fontSize: isMobile ? "0.8rem" : "0.9rem",
       },
       pinInputWrapper: {
@@ -359,10 +404,12 @@ const MainPage = () => {
         width: "100%",
         padding: isMobile ? "0.6rem" : "0.8rem",
         paddingRight: "3rem",
-        border: "1px solid #ddd",
+        border: `1px solid ${currentTheme.secondaryText}`,
         borderRadius: "0.5rem",
         fontSize: isMobile ? "0.9rem" : "1rem",
         boxSizing: "border-box",
+        backgroundColor: currentTheme.cardBg,
+        color: currentTheme.primaryText,
       },
       showPinButton: {
         position: "absolute",
@@ -373,15 +420,16 @@ const MainPage = () => {
         border: "none",
         cursor: "pointer",
         fontSize: isMobile ? "1rem" : "1.2rem",
+        color: currentTheme.secondaryText,
       },
       errorMessage: {
-        color: "#dc3545",
+        color: currentTheme.error,
         marginTop: "1rem",
         fontSize: isMobile ? "0.8rem" : "0.9rem",
       },
       supportedFormats: {
         fontSize: isMobile ? "10px" : "12px",
-        color: "#6c757d",
+        color: currentTheme.secondaryText,
         marginTop: "10px",
       },
       loadingScreen: {
@@ -390,7 +438,7 @@ const MainPage = () => {
         left: 0,
         width: "100%",
         height: "100%",
-        backgroundColor: "rgba(255, 255, 255, 0.95)",
+        backgroundColor: currentTheme.loadingBg,
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
@@ -412,41 +460,43 @@ const MainPage = () => {
         transform: "translate(-50%, -50%)",
         fontSize: isMobile ? "22px" : "28px",
         fontWeight: "700",
-        color: "#00A651",
+        color: currentTheme.accent,
       },
       statusMessage: {
         marginTop: "1rem",
         fontWeight: "500",
-        color: "#333",
+        color: currentTheme.primaryText,
         fontSize: isMobile ? "0.9rem" : "1rem",
         textAlign: "center",
       },
       factCard: {
-        backgroundColor: "rgb(207, 255, 230)",
+        backgroundColor: currentTheme.factCardBg,
         borderRadius: "1rem",
         padding: isMobile ? "1rem" : "1.5rem",
         maxWidth: isMobile ? "90%" : "500px",
         textAlign: "center",
-        borderLeft: "4px solid #00A651",
-        boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+        borderLeft: `4px solid ${currentTheme.accent}`,
+        boxShadow: currentTheme.cardShadow,
       },
       factTitle: {
         fontWeight: "700",
         marginBottom: "0.5rem",
-        color: "#00A651",
+        color: currentTheme.accent,
         fontSize: isMobile ? "0.9rem" : "1rem",
       },
       factContent: {
         fontSize: isMobile ? "0.9rem" : "1.1rem",
         lineHeight: "1.6",
-        color: "#333",
+        color: currentTheme.primaryText,
       },
       fileName: {
         fontSize: isMobile ? "1rem" : "1.2rem",
         wordBreak: "break-word",
+        color: currentTheme.primaryText,
       },
       fileSize: {
         fontSize: isMobile ? "0.8rem" : "0.9rem",
+        color: currentTheme.secondaryText,
       },
       decorativeTriangle: {
         position: 'absolute',
@@ -455,7 +505,7 @@ const MainPage = () => {
         width: "45%",
         height: "45%",
         zIndex: "1",
-        opacity:"0.6",
+        opacity: "0.6",
       }
     };
   };

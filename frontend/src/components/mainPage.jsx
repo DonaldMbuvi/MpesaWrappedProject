@@ -224,6 +224,7 @@ const MainPage = () => {
 
   // Responsive styles based on window width
   const getResponsiveStyles = () => {
+
     const isMobile = windowWidth < 768;
     const isTablet = windowWidth >= 768 && windowWidth < 1024;
     
@@ -458,7 +459,6 @@ const MainPage = () => {
       }
     };
   };
-
   const styles = getResponsiveStyles();
 
   return (

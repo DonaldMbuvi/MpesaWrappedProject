@@ -366,7 +366,7 @@
 }
 
 /* Mobile Responsiveness */
-@media (max-width: 768px) {
+@media (maxWidth: 768px) {
   .overlay-text h1 {
     font-size: 1.8rem;
   }

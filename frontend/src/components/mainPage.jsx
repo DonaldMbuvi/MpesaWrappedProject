@@ -17,6 +17,8 @@ const MainPage = () => {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
+  const isMobile = windowWidth < 768;
+  const isTablet = windowWidth >= 768 && windowWidth < 1024;
 
   // Facts data
   const facts = [
@@ -252,8 +254,7 @@ const MainPage = () => {
 
   // Responsive styles
   const getResponsiveStyles = () => {
-    const isMobile = windowWidth < 768;
-    const isTablet = windowWidth >= 768 && windowWidth < 1024;
+    
     
     return {
       wrapper: {

@@ -109,8 +109,8 @@ def csv_cleaner(csvFile):
         csv_buffer.seek(0)
         csv_content = csv_buffer.getvalue()
 
-        with open("cleaned.csv", "w") as f:
-            f.write(csv_content)
+        # with open("cleaned.csv", "w") as f:
+        #     f.write(csv_content)
         return csv_content
     except Exception as e:
         print(f"ERROR: {e}")

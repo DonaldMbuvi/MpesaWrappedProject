@@ -384,8 +384,8 @@ async  def report_maker(db, user_id, user_name):
         report = generate_report(transactions, start_date)
         
         # Save report to file
-        with open("report.json", "w") as f:
-            json.dump(report, f, indent=2)
+        # with open("report.json", "w") as f:
+        #     json.dump(report, f, indent=2)
         
         # Save to database
         report_id = await save_report_to_db(db, user_id, user_name, report)

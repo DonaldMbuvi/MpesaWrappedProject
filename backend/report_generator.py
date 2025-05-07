@@ -1,4 +1,4 @@
-from http.client import HTTPException
+from fastapi import HTTPException
 import json
 from collections import defaultdict
 from datetime import datetime, timedelta, date, time
@@ -307,26 +307,29 @@ async def save_report_to_db(db, user_id, user_name, report_data):
         
         # Check if report exists for this user
         cur.execute("""
-            SELECT report_id FROM report_table 
+            SELECT report_id, no_of_uploads FROM report_table 
             WHERE user_name = %s
         """, (user_name,))
         existing_report = cur.fetchone()
-        
+
         if existing_report:
+            total_uploads = int(existing_report["no_of_uploads"])
             # Update existing report
+            total_uploads += 1
             cur.execute("""
                 UPDATE report_table 
-                SET report_data = %s, updated_at = CURRENT_TIMESTAMP, user_id = %s
+                SET report_data = %s, updated_at = CURRENT_TIMESTAMP, user_id = %s, no_of_uploads = %s
                 WHERE user_name = %s
                 RETURNING report_id
-            """, (json.dumps(report_data), user_id, user_name))
+            """, (json.dumps(report_data), user_id, total_uploads, user_name))
         else:
             # Insert new report
+            total_uploads = 1
             cur.execute("""
-                INSERT INTO report_table (user_id, user_name, report_data)
-                VALUES (%s, %s, %s)
+                INSERT INTO report_table (user_id, user_name, report_data, no_of_uploads)
+                VALUES (%s, %s, %s, %s)
                 RETURNING report_id
-            """, (user_id, user_name, json.dumps(report_data)))
+            """, (user_id, user_name, json.dumps(report_data), total_uploads))
         
         db.commit()
         cur.close()

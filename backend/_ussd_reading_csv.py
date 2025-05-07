@@ -10,6 +10,7 @@ def csv_cleaner(csvFile):
 
         # Extract customer name
         customer_name = df["customer name"].iloc[0] if "customer name" in df.columns else "Unknown"
+        statement_start = df["statement start"].iloc[0] if "statement start" in df.columns else "Unknown"
         
         def categorize_transaction(description):
             description = description.strip().lower()
@@ -93,13 +94,13 @@ def csv_cleaner(csvFile):
                 amount_in = row["paid in"] if "paid in" in row else 0
                 amount_out = row["withdraw"] if "withdraw" in row else 0
 
-            return date, time, category, paid_to, amount_in, amount_out, customer_name
+            return date, time, category, paid_to, amount_in, amount_out, customer_name, statement_start
 
         transactions_data = df.apply(extract_transaction, axis=1)
 
         # Convert to DataFrame with customer details
         transactions_df = pd.DataFrame(transactions_data.tolist(), columns=[
-            "Date", "Time", "Category", "Paid To", "Amount In", "Amount Out", "User Name"
+            "Date", "Time", "Category", "Paid To", "Amount In", "Amount Out", "User Name", "Start Date"
         ])
 
         # return the CSV content as a string
@@ -108,8 +109,8 @@ def csv_cleaner(csvFile):
         csv_buffer.seek(0)
         csv_content = csv_buffer.getvalue()
 
-        # with open("cleaned.csv", "w") as f:
-        #     f.write(csv_content)
+        with open("cleaned.csv", "w") as f:
+            f.write(csv_content)
         return csv_content
     except Exception as e:
         print(f"ERROR: {e}")

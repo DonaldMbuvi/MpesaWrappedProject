@@ -15,20 +15,20 @@ const LandingPage = () => {
       title: "Spending Breakdown",
       description: "Understand where your money goes",
       stats: [
-        { category: "Shopping", percentage: "35%" },
-        { category: "Bills", percentage: "25%" },
-        { category: "Entertainment", percentage: "20%" },
-        { category: "Other", percentage: "20%" }
+        { category: "Pay Bill", percentage: "Ksh 43,000" },
+        { category: "Till", percentage: "Ksh 61,000" },
+        { category: "Send Money", percentage: "Ksh 20,000" },
+        { category: "Pochi la Biashara", percentage: "Ksh 14,000" }
       ]
     },
     {
       title: "Transaction Insights",
       description: "Top merchants and categories",
       stats: [
-        { merchant: "Safaricom", amount: "KSh 120,000" },
+        { merchant: "Agnes", amount: "KSh 120,000" },
         { merchant: "Jumia", amount: "KSh 85,000" },
         { merchant: "Naivas", amount: "KSh 65,000" },
-        { merchant: "Uber", amount: "KSh 45,000" }
+        { merchant: "Benard", amount: "KSh 45,000" }
       ]
     },
     {
@@ -36,41 +36,42 @@ const LandingPage = () => {
       description: "Year-end financial summary",
       stats: [
         { month: "January", total: "KSh 150,000" },
-        { month: "June", total: "KSh 275,000" },
-        { month: "December", total: "KSh 210,000" }
+        { month: "February", total: "KSh 75,000" },
+        { month: "March", total: "KSh 200,000" },
+        { month: "April", total: "KSh 56,000" }
       ]
     }
   ];
 
   // Animation duration in ms
-  //const animationDuration = 5000;
+  const animationDuration = 5000;
 
-  // Start or stop animation
-  // const toggleAnimation = () => {
-  //   if (animating) {
-  //     setAnimating(false);
-  //     cancelAnimationFrame(animationRef.current);
-  //   } else {
-  //     setAnimating(true);
-  //     const startTime = Date.now();
-  //     const animate = () => {
-  //       const elapsed = Date.now() - startTime;
-  //       const progress = Math.min(elapsed / animationDuration, 1);
-  //       setAnimationProgress(progress);
+  //Start or stop animation
+  const toggleAnimation = () => {
+    if (animating) {
+      setAnimating(false);
+      cancelAnimationFrame(animationRef.current);
+    } else {
+      setAnimating(true);
+      const startTime = Date.now();
+      const animate = () => {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / animationDuration, 1);
+        setAnimationProgress(progress);
         
-  //       if (progress < 1) {
-  //         animationRef.current = requestAnimationFrame(animate);
-  //       } else {
-  //         // Move to next card when animation completes
-  //         setCurrentCard((prev) => (prev === cards.length - 1 ? 0 : prev + 1));
-  //         setAnimationProgress(0);
-  //         setAnimating(false);
-  //       }
-  //     };
+        if (progress < 1) {
+          animationRef.current = requestAnimationFrame(animate);
+        } else {
+          // Move to next card when animation completes
+          setCurrentCard((prev) => (prev === cards.length - 1 ? 0 : prev + 1));
+          setAnimationProgress(0);
+          setAnimating(false);
+        }
+      };
       
-  //     animationRef.current = requestAnimationFrame(animate);
-  //   }
-  // };
+      animationRef.current = requestAnimationFrame(animate);
+    }
+  };
 
   // Clean up animation on unmount
   useEffect(() => {

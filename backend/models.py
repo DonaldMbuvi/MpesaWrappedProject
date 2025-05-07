@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS statement_table (
     id SERIAL PRIMARY KEY,
     user_id VARCHAR(50) NOT NULL,
     user_name VARCHAR(50) NOT NULL,
+    start_date VARCHAR(40) NULL,
     transaction_date DATE NOT NULL,
     transaction_time TIME NOT NULL,
     category VARCHAR(50) NOT NULL,

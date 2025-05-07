@@ -53,6 +53,7 @@ const ResultPage = () => {
   const [inactive_days, setInactiveDays] = useState({});
   const [total_inactive_days, setTotalInactiveDays] = useState(0);
   const [peak_transaction_period, setPeak_transaction_period] = useState({});
+  const [start_date, setStartDate] = useState({});
 
   // Helper functions
   const getDaySuffix = (day) => {
@@ -153,7 +154,7 @@ const ResultPage = () => {
         setInactiveDays(data.results_page?.time_based?.inactive_days || {});
         setTotalInactiveDays(data.user_analytics_page?.number_of_inactive_days || 0);
         setPeak_transaction_period(data.results_page?.time_based?.peak_transaction_period || {});
-
+        setStartDate(data.results_page?.time_based?.start_date || "")
       } catch (err) {
         console.log("Error fetching data:", err);
       } finally {
@@ -318,15 +319,16 @@ const ResultPage = () => {
     {
       title: (
         <>
-          <h6 style={inlineH5}>Guess who topped your sending chart?</h6>
-          <br /><br />
+          <h6 style={inlineH5}>Guess who topped your frequency chart?</h6>
+          <br />
           <span style={{ animationDelay: "2s" }}>
-            <span style={{...inlineH5, fontSize: "25px"}}>It's </span>
+            <span style={{ fontSize: "25px"}}>It's.. </span>
+            <br /><br />
             <span style={{ color: "#4cd762"}}>{most_frequent_recepient.name || 'N/A'}</span>
             <br /><br />
-            <span style={{...inlineH5, fontSize: "25px"}}>with &nbsp;</span>   
+            <span style={{...inlineH5, fontSize: "25px"}}>received from you &nbsp;</span>   
             <span style={{fontSize: "26px", color: "#4cd762"}}>
-              {most_frequent_recepient.frequency || '0'} transactions 
+              {most_frequent_recepient.frequency || '0'} times 
             </span>
             <br />
             <span style={{...inlineH5, fontSize: "25px"}}>totaling &nbsp;</span>   
@@ -383,7 +385,7 @@ const ResultPage = () => {
             {Object.keys(inactive_days).filter(key => key !== "more_days_flag").length > 0
               ? "However, you didn't use Mpesa on"
               : <span style={{fontSize: "32px", color:"rgb(255, 255, 255)"}}>
-                  Wow! you've been using Mpesa continously.
+                  Wow! you've been using Mpesa continously since {start_date}.
                 </span>
             }
           </h6> 

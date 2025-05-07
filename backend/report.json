@@ -1,0 +1,108 @@
+{
+  "results_page": {
+    "essentials": {
+      "total_spent": 974.0,
+      "total_received": 5000.0,
+      "net_flow": 4026.0,
+      "top_month": {
+        "month_name": "May",
+        "month_amount": 974.0
+      },
+      "categories": {
+        "Till": 840.0,
+        "send_money": 100.0,
+        "Pay_Bill": 34.0
+      }
+    },
+    "top_spending_habits": {
+      "biggest_transactions": {
+        "biggest_amount": 149.0,
+        "biggest_date": "2025-05-03",
+        "its_category": "Till Payment"
+      },
+      "most_frequent_recepient": {
+        "name": "PURITY KALUNG'E",
+        "frequency": 1,
+        "amount": 100.0
+      },
+      "top_recepient": {
+        "name": "PURITY KALUNG'E",
+        "amount": 100.0
+      },
+      "most_visited_paybill_or_till": {
+        "type": "Till Payment",
+        "name": "FLONIKA  LIAGALA",
+        "frequency": 4,
+        "amount": 190.0
+      }
+    },
+    "time_based": {
+      "most_active_day": {
+        "date": "2025-05-02",
+        "number_of_transactions": 9,
+        "active_day_amount": 294.0
+      },
+      "inactive_days": {},
+      "peak_transaction_period": {
+        "period_name": "Afternoon",
+        "percentage": "50%"
+      },
+      "start_date": "01 May 2025"
+    }
+  },
+  "user_analytics_page": {
+    "monthly_transactions": {
+      "May": 974.0
+    },
+    "most_frequent_recepients": {
+      "recipient_1": {
+        "recipient_name": "PURITY KALUNG'E",
+        "recipient_amount": 100.0,
+        "frequency": 1
+      },
+      "recipient_2": {
+        "recipient_name": "",
+        "recipient_amount": 0,
+        "frequency": 0
+      },
+      "recipient_3": {
+        "recipient_name": "",
+        "recipient_amount": 0,
+        "frequency": 0
+      },
+      "recipient_4": {
+        "recipient_name": "",
+        "recipient_amount": 0,
+        "frequency": 0
+      },
+      "recipient_5": {
+        "recipient_name": "",
+        "recipient_amount": 0,
+        "frequency": 0
+      }
+    },
+    "top_recepients": {
+      "recipient_1": {
+        "recipient_name": "PURITY KALUNG'E",
+        "recipient_amount": 100.0,
+        "frequency": 1
+      }
+    },
+    "transaction_periods": {
+      "afternoon": 8,
+      "morning": 5,
+      "late_night": 3
+    },
+    "fuliza": {
+      "amount_borrowed": 0,
+      "fuliza_fee": 0
+    },
+    "total_transaction_cost": 4.0,
+    "number_of_inactive_days": 0,
+    "airtime_and_bundles": 0,
+    "mshwari": {
+      "amount_in": 0,
+      "amount_out": 0
+    }
+  }
+}

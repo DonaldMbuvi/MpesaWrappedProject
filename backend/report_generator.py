@@ -3,17 +3,7 @@ import json
 from collections import defaultdict
 from datetime import datetime, timedelta, date, time
 
-
-def load_transactions(file_path):
-    """Load transactions from JSON file"""
-    try:
-        with open(file_path) as f:
-            return json.load(f)
-    except Exception as e:
-        print(f"Error loading transactions: {e}")
-        return []
-
-def generate_report(transactions):
+def generate_report(transactions, start_date):
     """Generate the exact JSON structure by analyzing transactions"""
     
     # Initialize all data structures
@@ -47,7 +37,8 @@ def generate_report(transactions):
             "time_based": {
                 "most_active_day": {"date": "", "number_of_transactions": 0, "active_day_amount": 0},
                 "inactive_days": {},
-                "peak_transaction_period": {"period_name": "", "percentage": "0%"}
+                "peak_transaction_period": {"period_name": "", "percentage": "0%"},
+                "start_date": ""
             }
         },
         "user_analytics_page": {
@@ -263,6 +254,8 @@ def generate_report(transactions):
             "period_name": peak_period[0].capitalize(),
             "percentage": f"{percentage}%"
         }
+    #start date
+    report["results_page"]["time_based"]["start_date"] = start_date
 
     # Top 5 recipients
     # Get top 5 recipients by frequency
@@ -345,7 +338,7 @@ async  def report_maker(db, user_id, user_name):
     try:
         cur = db.cursor()
         sql = """
-        SELECT user_name, transaction_date, transaction_time,
+        SELECT user_name, start_date, transaction_date, transaction_time,
                category, paid_to, amount_in, amount_out
         FROM statement_table
         WHERE user_name = %s
@@ -385,13 +378,14 @@ async  def report_maker(db, user_id, user_name):
                     txn['transaction_date'] = str(txn['transaction_date'])
             
             transactions.append(txn)
-        
+        # Extract start_date
+        start_date = rows[0]['start_date']
         # Generate report
-        report = generate_report(transactions)
+        report = generate_report(transactions, start_date)
         
         # Save report to file
-        # with open("report.json", "w") as f:
-        #     json.dump(report, f, indent=2)
+        with open("report.json", "w") as f:
+            json.dump(report, f, indent=2)
         
         # Save to database
         report_id = await save_report_to_db(db, user_id, user_name, report)

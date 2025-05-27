@@ -71,23 +71,32 @@ def process_single_page_bytes(page_tuple, skip_first_table=False):
     page_num, page_bytes = page_tuple
     try:
         import tempfile
-        
-        with tempfile.NamedTemporaryFile(suffix='.pdf', delete=True) as temp_file:
-            temp_file.write(page_bytes)
-            temp_file.flush()
-            
-            tables = camelot.read_pdf(
-                temp_file.name,
-                pages='1',
-                flavor='lattice',
-                process_background=False,
-                copy_text=['v'],
-                line_scale=40,
-                shift_text=[''],
-                split_text=False,
-                flag_size=False,
-                layout_kwargs={'detect_vertical': False}
-            )
+        import os
+
+        # Create a custom temp dir (avoids Windows locks)
+        temp_dir = os.path.join(os.getcwd(), "temp_pdfs")
+        os.makedirs(temp_dir, exist_ok=True)
+
+        # Write the PDF to a named file
+        temp_path = os.path.join(temp_dir, f"temp_{page_num}.pdf")
+        with open(temp_path, 'wb') as f:
+            f.write(page_bytes)
+
+        tables = camelot.read_pdf(
+            temp_path,  # camelot reads from this path
+            pages='1',
+            flavor='lattice',
+            process_background=False,
+            copy_text=['v'],
+            line_scale=40,
+            shift_text=[''],
+            split_text=False,
+            flag_size=False,
+            layout_kwargs={'detect_vertical': False}
+        )
+
+        # Clean up
+        os.unlink(temp_path)
         
         if tables.n == 0:
             return []
@@ -116,12 +125,14 @@ def process_single_page_bytes(page_tuple, skip_first_table=False):
         
         return all_data
     except Exception as e:
-        print(f"Error processing page {page_num}: {str(e)}")
-        return []
+        print(f"Error processing page {page_num}: (e)")
+        if 'temp_path' in locals():
+            os.unlink(temp_path)
+        return None
     
 def extract_tables_from_pdf_bytes(pdf_bytes, skip_first_table=True, max_workers=None, memory_limit=None):
     """Extract tables from PDF bytes with parallelization and memory optimization."""
-    warnings.filterwarnings("ignore")
+    warnings.filterwarnings("ignore") 
     
     reader = PyPDF2.PdfReader(BytesIO(pdf_bytes))
     total_pages = len(reader.pages)

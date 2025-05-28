@@ -1,9 +1,19 @@
-from fastapi import HTTPException
+from http.client import HTTPException
 import json
 from collections import defaultdict
 from datetime import datetime, timedelta, date, time
 
-def generate_report(transactions, start_date):
+
+def load_transactions(file_path):
+    """Load transactions from JSON file"""
+    try:
+        with open(file_path) as f:
+            return json.load(f)
+    except Exception as e:
+        print(f"Error loading transactions: {e}")
+        return []
+
+def generate_report(transactions):
     """Generate the exact JSON structure by analyzing transactions"""
     
     # Initialize all data structures
@@ -37,8 +47,7 @@ def generate_report(transactions, start_date):
             "time_based": {
                 "most_active_day": {"date": "", "number_of_transactions": 0, "active_day_amount": 0},
                 "inactive_days": {},
-                "peak_transaction_period": {"period_name": "", "percentage": "0%"},
-                "start_date": ""
+                "peak_transaction_period": {"period_name": "", "percentage": "0%"}
             }
         },
         "user_analytics_page": {
@@ -254,8 +263,6 @@ def generate_report(transactions, start_date):
             "period_name": peak_period[0].capitalize(),
             "percentage": f"{percentage}%"
         }
-    #start date
-    report["results_page"]["time_based"]["start_date"] = start_date
 
     # Top 5 recipients
     # Get top 5 recipients by frequency
@@ -307,29 +314,26 @@ async def save_report_to_db(db, user_id, user_name, report_data):
         
         # Check if report exists for this user
         cur.execute("""
-            SELECT report_id, no_of_uploads FROM report_table 
+            SELECT report_id FROM report_table 
             WHERE user_name = %s
         """, (user_name,))
         existing_report = cur.fetchone()
-
+        
         if existing_report:
-            total_uploads = int(existing_report["no_of_uploads"])
             # Update existing report
-            total_uploads += 1
             cur.execute("""
                 UPDATE report_table 
-                SET report_data = %s, updated_at = CURRENT_TIMESTAMP, user_id = %s, no_of_uploads = %s
+                SET report_data = %s, updated_at = CURRENT_TIMESTAMP, user_id = %s
                 WHERE user_name = %s
                 RETURNING report_id
-            """, (json.dumps(report_data), user_id, total_uploads, user_name))
+            """, (json.dumps(report_data), user_id, user_name))
         else:
             # Insert new report
-            total_uploads = 1
             cur.execute("""
-                INSERT INTO report_table (user_id, user_name, report_data, no_of_uploads)
-                VALUES (%s, %s, %s, %s)
+                INSERT INTO report_table (user_id, user_name, report_data)
+                VALUES (%s, %s, %s)
                 RETURNING report_id
-            """, (user_id, user_name, json.dumps(report_data), total_uploads))
+            """, (user_id, user_name, json.dumps(report_data)))
         
         db.commit()
         cur.close()
@@ -341,7 +345,7 @@ async  def report_maker(db, user_id, user_name):
     try:
         cur = db.cursor()
         sql = """
-        SELECT user_name, start_date, transaction_date, transaction_time,
+        SELECT user_name, transaction_date, transaction_time,
                category, paid_to, amount_in, amount_out
         FROM statement_table
         WHERE user_name = %s
@@ -381,10 +385,9 @@ async  def report_maker(db, user_id, user_name):
                     txn['transaction_date'] = str(txn['transaction_date'])
             
             transactions.append(txn)
-        # Extract start_date
-        start_date = rows[0]['start_date']
+        
         # Generate report
-        report = generate_report(transactions, start_date)
+        report = generate_report(transactions)
         
         # Save report to file
         # with open("report.json", "w") as f:

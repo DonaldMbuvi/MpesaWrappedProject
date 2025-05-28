@@ -219,10 +219,6 @@ async def convert_ussd_pdf_to_csv(pdf_file, pin: str):
             customer_name = name_match.group(1).strip().replace("null", "")
         else:
             raise HTTPException(status_code=400, detail="PDF not an M-Pesa statement")
-        period_match = re.search(r"Statement Period:\s*([^\n]+)", first_page_text)
-        if period_match:
-            statement_start = period_match.group(1).strip()
-            statement_start = statement_start.split('-')[0].strip()
 
         # Optimize PDF in memory
         optimized_pdf = preprocess_pdf_in_memory(decrypted_pdf)
@@ -245,7 +241,6 @@ async def convert_ussd_pdf_to_csv(pdf_file, pin: str):
 
         df = df[df['Receipt No.'].notna() & (df['Receipt No.'] != '')]
         df["customer name"] = customer_name
-        df["statement start"] = statement_start
 
         df['withdraw'] = df['withdraw'].str.replace('-', '').str.replace(',', '').replace('', '0').astype(float)         
         df['paid in'] = df['paid in'].str.replace('-', '').str.replace(',', '').replace('', '0').astype(float)         

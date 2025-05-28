@@ -72,8 +72,8 @@ async def upload_csv_and_save_to_db(db: psycopg2.extensions.connection = Depends
                 amount_out = int(float(row[5].replace(',', ''))) if row[5] and row[5] != '0' else 0
                 
                 user_name = row[6]  
-                start_date = row[7]  
 
+                
                 if checker == 0:
                     # 1. Check if the user_name exists only at first iteration
                     cur.execute("""
@@ -95,11 +95,11 @@ async def upload_csv_and_save_to_db(db: psycopg2.extensions.connection = Depends
                 # Insert new record
                 insert_sql = """
                     INSERT INTO statement_table 
-                    (user_id, user_name, start_date, transaction_date, transaction_time, 
+                    (user_id, user_name, transaction_date, transaction_time, 
                     category, paid_to, amount_in, amount_out)
-                    VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s);
+                    VALUES ( %s, %s, %s, %s, %s, %s, %s, %s);
                 """
-                cur.execute(insert_sql, (user_id, user_name, start_date, transaction_date, transaction_time, category, paid_to, amount_in, amount_out))
+                cur.execute(insert_sql, (user_id, user_name, transaction_date, transaction_time, category, paid_to, amount_in, amount_out))
             except (ValueError, IndexError) as e:
                 raise HTTPException(status_code=400, detail=f"Error processing row {row}: {e}")
 
@@ -141,4 +141,3 @@ async def get_report(user_id: str = Query(...), db = Depends(get_db_connection))
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
-    
